@@ -22,10 +22,8 @@ export default function TabAuth({ children }: { children: React.ReactNode }) {
             }} className="w-[400px]">
                 <TabsList className='w-full mb-4'>
                     <TabsTrigger value="login">Login</TabsTrigger>
-                    <TabsTrigger value="register">Register</TabsTrigger>
                 </TabsList>
                 <TabsContent value="login">{active === 'login' ? children : null}</TabsContent>
-                <TabsContent value="register">{active === 'register' ? children : null}</TabsContent>
             </Tabs>
         </div>
     )
