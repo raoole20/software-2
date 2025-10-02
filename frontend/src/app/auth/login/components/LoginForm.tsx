@@ -41,7 +41,7 @@ export default function LoginForm() {
 
     return (
         <Form {...form}>
-            <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-[90%] md:max-w-sm">
+            <form onSubmit={handleSubmit(onSubmit)} className="w-full">
                 <div className="space-y-4">
                     <FormField
                         control={form.control}
