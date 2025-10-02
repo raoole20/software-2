@@ -1,10 +1,8 @@
-import { Button } from '@/components/ui/button'
 import React from 'react'
+import LoginForm from './components/LoginForm'
 
 export default function Page() {
     return (
-        <div>
-            <Button>Iniciar sesión</Button>
-        </div>
+        <LoginForm />
     )
 }

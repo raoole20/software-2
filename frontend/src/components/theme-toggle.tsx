@@ -6,7 +6,6 @@ import { Switch } from '@/components/ui/switch'
 export default function ThemeToggle() {
   const [isDark, setIsDark] = useState<boolean | null>(null)
 
-  // Detect system preference and localStorage on mount
   useEffect(() => {
     try {
       const stored = localStorage.getItem('theme')
@@ -31,7 +30,6 @@ export default function ThemeToggle() {
     }
   }, [])
 
-  // Toggle handler
   const onToggle = (checked: boolean) => {
     setIsDark(checked)
     try {
@@ -50,13 +48,16 @@ export default function ThemeToggle() {
   if (isDark === null) return null
 
   return (
-    <div className="flex items-center gap-2">
-      <span className="text-xs text-muted-foreground">{isDark ? 'Dark' : 'Light'}</span>
-      <Switch
-        checked={!!isDark}
-        onCheckedChange={(v) => onToggle(Boolean(v))}
-        aria-label="Toggle theme"
-      />
+    <div className='w-full flex flex-col-reverse sm:flex-row justify-center sm:justify-end p-4'>
+      <div className="flex items-center gap-5">
+        <span className="text-xs text-muted-foreground">{isDark ? 'Dark' : 'Light'}</span>
+        <Switch
+          checked={!!isDark}
+          className=''
+          onCheckedChange={(v) => onToggle(Boolean(v))}
+          aria-label="Toggle theme"
+        />
+      </div>
     </div>
   )
 }
