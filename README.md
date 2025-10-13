@@ -49,5 +49,22 @@ Notas:
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
+Documentación OpenAPI / Swagger
+--------------------------------
+
+Una vez que tengas el servidor corriendo puedes acceder a la documentación automática generada por drf-spectacular:
+
+```text
+http://127.0.0.1:8000/api/schema/            # OpenAPI JSON
+http://127.0.0.1:8000/api/schema/swagger-ui/ # Swagger UI interactivo
+http://127.0.0.1:8000/api/schema/redoc/      # ReDoc UI
+```
+
+Si necesitas personalizar o documentar mejor endpoints, puedes usar:
+
+- `@extend_schema(...)` en vistas o viewsets (drf-spectacular utilities) para describir request/response, parámetros y ejemplos.
+- Documentar serializers con `help_text` y `example` para que aparezca en el esquema generado.
+
+
 1. cd ./backend
 2. python manage.py runserver
