@@ -3,6 +3,7 @@
 import React from "react"
 import Link from "next/link"
 import { useForm } from "react-hook-form"
+import { signIn } from "next-auth/react"
 
 import { yupResolver } from "@hookform/resolvers/yup"
 import { Input } from "@/components/ui/input"
@@ -17,6 +18,7 @@ import {
 } from "@/components/ui/form"
 import { AuthLoginType } from "@/types"
 import { AuthLoginSchema } from "@/lib/validators"
+import { toast } from "sonner"
 
 
 export default function LoginForm() {
@@ -31,12 +33,21 @@ export default function LoginForm() {
     } = form
 
     async function onSubmit(values: AuthLoginType) {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                console.log("Login submit", values)
-                resolve(true)
-            }, 700)
+        const result = await signIn("credentials", {
+            redirect: false,
+            email: values.email,
+            password: values.password,
         })
+
+        if (result?.error) {
+            // handle error (you could set form error state)
+            toast.error("Login failed. Please check your credentials.")
+            return
+        }
+
+        // On success, next-auth stores JWT in cookie (session available client-side)
+        // You can redirect to a protected page
+        window.location.href = "/"
     }
 
     return (

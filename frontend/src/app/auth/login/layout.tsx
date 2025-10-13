@@ -10,11 +10,11 @@ export default function Layout({ children, inter }: { children: React.ReactNode,
             <Tabs defaultValue="collaborator" className="w-full max-w-md mb-4 space-y-5">
                 <TabsList className='w-full'>
                     <TabsTrigger value="collaborator">Colaborador</TabsTrigger>
-                    <TabsTrigger value="inter">Becario</TabsTrigger>
+                    {/* <TabsTrigger value="inter">Becario</TabsTrigger> */}
                 </TabsList>
-                <TabsContent value="inter" className="w-full flex justify-center">
+                {/* <TabsContent value="inter" className="w-full flex justify-center">
                     {inter}
-                </TabsContent>
+                </TabsContent> */}
                 <TabsContent value="collaborator" className="w-full flex justify-center">
                     {children}
                 </TabsContent>

@@ -1,8 +1,27 @@
 # software-2
 
+# Pasos para correr el Front
 
+1. Abrir la carpeta del front
+
+```
+cd  Front
+```
+
+2. Instalar dependencias
+
+```
+npm install
+```
+
+3. Correr el front
+
+```
+npm run dev
+```
 
 # pasos para correr el back
+
 Instrucciones y comandos para PowerShell (Windows):
 
 1. Abrir PowerShell en la raíz del proyecto (donde está `.venv` y la carpeta `backend`).
@@ -42,6 +61,7 @@ C:/Users/raool/OneDrive/Documentos/own_proyect/software/.venv/Scripts/python.exe
 ```
 
 Notas:
+
 - Asegúrate de ejecutar los comandos con la virtualenv activa para que Django use las dependencias instaladas en esa venv.
 - Si PowerShell bloquea la activación por la política de ejecución, puedes permitir scripts para el usuario actual:
 
@@ -49,8 +69,7 @@ Notas:
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
-Documentación OpenAPI / Swagger
---------------------------------
+## Documentación OpenAPI / Swagger
 
 Una vez que tengas el servidor corriendo puedes acceder a la documentación automática generada por drf-spectacular:
 
@@ -64,7 +83,6 @@ Si necesitas personalizar o documentar mejor endpoints, puedes usar:
 
 - `@extend_schema(...)` en vistas o viewsets (drf-spectacular utilities) para describir request/response, parámetros y ejemplos.
 - Documentar serializers con `help_text` y `example` para que aparezca en el esquema generado.
-
 
 1. cd ./backend
 2. python manage.py runserver
