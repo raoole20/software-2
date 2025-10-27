@@ -19,9 +19,12 @@ import {
 import { AuthLoginType } from "@/types"
 import { AuthLoginSchema } from "@/lib/validators"
 import { toast } from "sonner"
+import { useRouter } from "next/navigation"
 
 
 export default function LoginForm() {
+    const router = useRouter();
+    
     const form = useForm<AuthLoginType>({
         resolver: yupResolver(AuthLoginSchema),
         defaultValues: { email: "", password: "" },
@@ -40,14 +43,12 @@ export default function LoginForm() {
         })
 
         if (result?.error) {
-            // handle error (you could set form error state)
             toast.error("Login failed. Please check your credentials.")
             return
         }
 
-        // On success, next-auth stores JWT in cookie (session available client-side)
-        // You can redirect to a protected page
-        window.location.href = "/"
+        toast.success("Logged in successfully!");
+        router.push("/admin");
     }
 
     return (
