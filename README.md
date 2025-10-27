@@ -86,3 +86,11 @@ Si necesitas personalizar o documentar mejor endpoints, puedes usar:
 
 1. cd ./backend
 2. python manage.py runserver
+
+### Datos del superusuario
+```
+{
+  "email": "cristobal26r@gmail.com",
+  "password": "31135242c"
+}
+```
