@@ -48,7 +48,7 @@ export default function LoginForm() {
         }
 
         toast.success("Logged in successfully!");
-        router.push("/admin");
+        router.push("/dashboard/");
     }
 
     return (

@@ -1,7 +1,7 @@
-import NextAuth from "next-auth";
+import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
-const handler = NextAuth({
+export const authOptions: AuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -29,11 +29,21 @@ const handler = NextAuth({
 
           const data = await res.json();
 
-          if (!res.ok) {
+          // Basic runtime validation of backend response
+          const isValid = (d: any) => {
+            return !!d && typeof d.token === 'string' && d.user && (typeof d.user.id === 'number' || typeof d.user.id === 'string') && typeof d.user.email === 'string'
+          }
+
+          if (!res.ok || !isValid(data)) {
+            console.error('Invalid login response from backend', { status: res.status, body: data })
             return null;
           }
 
-          return { ...data.user, accessToken: data.token };
+          // Normalize user id to number when possible
+          const user = { ...(data.user as any) } as any
+          if (typeof user.id === 'string' && !Number.isNaN(Number(user.id))) user.id = Number(user.id)
+
+          return { ...user, accessToken: data.token };
         } catch (error) {
           console.error("Error during authorization:", error);
           return null;
@@ -63,6 +73,7 @@ const handler = NextAuth({
   pages: {
     signIn: "/auth/login",
   },
-});
+}
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
