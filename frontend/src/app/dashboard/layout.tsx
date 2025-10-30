@@ -8,6 +8,8 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { getSession } from "@/lib"
+import { BreadcrumbAdmin } from "@/components/breadrumb/breadcrumb"
+import ThemeToggle from "@/components/theme-toggle"
 
 export default async function Layout({
   children,
@@ -33,10 +35,12 @@ export default async function Layout({
               Panel de control
             </span>
           </div>
-          <span className="text-xs uppercase tracking-wide text-muted-foreground">
+          <span className="text-xs uppercase tracking-wide text-muted-foreground flex gap-5 items-center justify-center">
+            <ThemeToggle />
             {roleLabel}
           </span>
         </header>
+        <BreadcrumbAdmin />
         <div className="flex flex-1 flex-col gap-4 p-4">{children}</div>
       </SidebarInset>
     </SidebarProvider>

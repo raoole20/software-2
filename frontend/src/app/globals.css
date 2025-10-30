@@ -45,39 +45,58 @@
 
 :root {
   --radius: 0.625rem;
+
+  /* 1. Base: Fondo blanco puro, texto de gris oscuro con un toque frío */
   --background: oklch(1 0 0);
-  --foreground: oklch(0.13 0.028 261.692);
+  --foreground: oklch(0.18 0.02 260);
+
+  /* 2. Superficies: Las tarjetas se mantienen blancas para "flotar" */
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.13 0.028 261.692);
+  --card-foreground: oklch(0.18 0.02 260);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.13 0.028 261.692);
-  --primary: oklch(0.21 0.034 264.665);
-  --primary-foreground: oklch(0.985 0.002 247.839);
-  --secondary: oklch(0.967 0.003 264.542);
-  --secondary-foreground: oklch(0.21 0.034 264.665);
-  --muted: oklch(0.967 0.003 264.542);
-  --muted-foreground: oklch(0.551 0.027 264.364);
-  --accent: oklch(0.967 0.003 264.542);
-  --accent-foreground: oklch(0.21 0.034 264.665);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.928 0.006 264.531);
-  --input: oklch(0.928 0.006 264.531);
-  --ring: oklch(0.707 0.022 261.325);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0.002 247.839);
-  --sidebar-foreground: oklch(0.13 0.028 261.692);
-  --sidebar-primary: oklch(0.21 0.034 264.665);
-  --sidebar-primary-foreground: oklch(0.985 0.002 247.839);
-  --sidebar-accent: oklch(0.967 0.003 264.542);
-  --sidebar-accent-foreground: oklch(0.21 0.034 264.665);
-  --sidebar-border: oklch(0.928 0.006 264.531);
-  --sidebar-ring: oklch(0.707 0.022 261.325);
+  --popover-foreground: oklch(0.18 0.02 260);
+
+  /* 3. Primario: Un azul/púrpura más vibrante y con más presencia */
+  --primary: oklch(0.6 0.18 265);
+  --primary-foreground: oklch(1 0 0); /* Texto blanco para alto contraste */
+
+  /* 4. Neutros con Tono (El cambio clave): 
+     En lugar de grises, usamos colores muy claros y desaturados del tono base. */
+  --secondary: oklch(0.97 0.015 264);
+  --secondary-foreground: oklch(0.3 0.03 264);
+  --muted: oklch(0.985 0.008 264);
+  --muted-foreground: oklch(0.45 0.015 264);
+  --accent: oklch(0.97 0.015 264); /* Usado para hovers, etc. */
+  --accent-foreground: oklch(0.3 0.03 264);
+
+  /* 5. Destructivo: Un rojo limpio */
+  --destructive: oklch(0.65 0.22 27);
+  --destructive-foreground: oklch(1 0 0);
+
+  /* 6. Bordes e Inputs: También usan el tinte de color sutil */
+  --border: oklch(0.92 0.012 264);
+  --input: oklch(0.95 0.01 264);
+  --ring: oklch(0.6 0.18 265); /* Anillo de foco basado en el primario */
+
+  /* 7. Gráficos: Mantenemos los colores vibrantes */
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+
+  /* 8. Sidebar: Un fondo ligeramente teñido para diferenciarlo */
+  --sidebar: oklch(0.985 0.008 264);
+  --sidebar-foreground: oklch(0.18 0.02 260);
+  --sidebar-primary: oklch(0.6 0.18 265);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.92 0.012 264); /* Fondo para ítem activo */
+  --sidebar-accent-foreground: oklch(0.18 0.02 260);
+  --sidebar-border: oklch(0.92 0.012 264);
+  --sidebar-ring: oklch(0.6 0.18 265);
 }
 
+/* --- TU MODO OSCURO (SIN CAMBIOS) --- */
 .dark {
   --background: oklch(0.13 0.028 261.692);
   --foreground: oklch(0.985 0.002 247.839);
