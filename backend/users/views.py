@@ -1,7 +1,7 @@
 from rest_framework import viewsets, status, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.authtoken.models import Token
+from rest_framework.authtoken.models import Token 
 from django.db import models
 from .models import Usuario
 from .serializers import UsuarioSerializer, LoginSerializer, UsuarioCreateSerializer
@@ -51,10 +51,12 @@ class UsuarioViewSet(viewsets.ModelViewSet):
     
     def get_queryset(self):
         user = self.request.user
+        # NUEVO: Incluir prefetch para optimizar consultas
+        queryset = Usuario.objects.all().prefetch_related('actividades_asignadas')
         if user.rol == 'administrador':
-            return Usuario.objects.all()
+            return queryset
         elif user.rol == 'becario':
-            return Usuario.objects.filter(id=user.id)
+            return queryset.filter(id=user.id)
         return Usuario.objects.none()
     
     def get_permissions(self):
@@ -66,3 +68,36 @@ class UsuarioViewSet(viewsets.ModelViewSet):
     def mi_perfil(self, request):
         serializer = self.get_serializer(request.user)
         return Response(serializer.data)
+
+    # NUEVO: Endpoint para asignar actividades a un becario
+    @action(detail=True, methods=['post'], permission_classes=[IsAdministrador])
+    def asignar_actividades(self, request, pk=None):
+        usuario = self.get_object()
+        
+        # Verificar que el usuario sea un becario
+        if usuario.rol != 'becario':
+            return Response(
+                {'error': 'Solo se pueden asignar actividades a becarios'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        actividades_ids = request.data.get('actividades_ids', [])
+        
+        # Verificar que las actividades existan
+        from activities.models import Actividad
+        actividades = Actividad.objects.filter(id__in=actividades_ids)
+        
+        if len(actividades) != len(actividades_ids):
+            return Response(
+                {'error': 'Algunas actividades no existen'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Asignar las actividades al becario
+        usuario.actividades_asignadas.add(*actividades)
+        
+        return Response({
+            'message': f'Se asignaron {len(actividades)} actividades al becario',
+            'becario': f"{usuario.first_name} {usuario.last_name}",
+            'actividades_asignadas': [actividad.titulo for actividad in actividades]
+        })

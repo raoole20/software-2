@@ -26,6 +26,14 @@ class Actividad(models.Model):
     creador = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name='actividades_creadas')
     en_catalogo = models.BooleanField(default=False)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
+    
+    # NUEVO: Relación muchos a muchos con becarios
+    becarios_asignados = models.ManyToManyField(
+        Usuario, 
+        related_name='actividades_asignadas',
+        blank=True,
+        limit_choices_to={'rol': 'becario'}  # Solo se pueden asignar becarios
+    )
 
     def __str__(self):
         return self.titulo
