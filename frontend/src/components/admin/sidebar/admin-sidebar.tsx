@@ -96,13 +96,17 @@ const adminNavigation: DashboardSection[] = [
     ],
   }, 
   {
-    title: "Horas de oficina",
+    title: "Información",
     icon: CalendarClock,
     items: [
       {
-        title: "Agenda",
+        title: "Desarrollado Por",
         href: "/dashboard/admin/office-hours",
       },
+      {
+        title: "Contacto",
+        href: "/dashboard/admin/contact",
+      }
     ],
   },
 ]
