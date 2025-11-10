@@ -122,6 +122,20 @@ const collaboratorNavigation: DashboardSection[] = [
       },
     ],
   },
+  {
+    title: "Actividades",
+    icon: CalendarClock,
+    items: [
+      {
+        title: "Listado",
+        href: "/dashboard/interns/activity",
+      },
+      {
+        title: "Asignar horas",
+        href: "/dashboard/interns/activity/assign",
+      }
+    ],
+  }
 ]
 
 export default function AdminSidebar({ user }: AdminSidebarProps) {
