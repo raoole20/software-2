@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    'drf_spectacular',
     'corsheaders',
     'users',
     'activities',
@@ -54,6 +55,16 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
+    # Use drf-spectacular for the OpenAPI schema generation
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+# drf-spectacular settings (optional tweaks)
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Software-2 API',
+    'DESCRIPTION': 'Documentación OpenAPI para el backend',
+    'VERSION': '1.0.0',
+    # Other settings you can add: 'SERVE_INCLUDE_SCHEMA': False, etc.
 }
 
 MIDDLEWARE = [
