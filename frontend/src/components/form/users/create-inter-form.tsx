@@ -4,7 +4,6 @@ import * as React from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-import { z } from 'zod'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -19,32 +18,21 @@ import {
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { CreateInternFormValues, createInternSchema } from '@/lib/validators/user'
+import { createUser } from '@/server/users'
+import { Roles } from '@/types/roles'
+import { useRouter } from 'next/navigation'
 
-const createInternSchema = z.object({
-    username: z.string().min(4, 'Ingresa al menos 4 caracteres'),
-    email: z.string().email('Ingresa un correo valido'),
-    password: z.string().min(8, 'La contrasena debe tener 8 caracteres'),
-    rol: z.enum(['becario', 'administrador']),
-    first_name: z.string().min(2, 'Ingresa al menos 2 caracteres'),
-    last_name: z.string().min(2, 'Ingresa al menos 2 caracteres'),
-    sexo: z.enum(['M', 'F', 'O']),
-    fecha_nacimiento: z.string().min(1, 'Selecciona la fecha de nacimiento'),
-    carrera: z.string().min(2, 'Ingresa el nombre de la carrera'),
-    universidad: z.string().min(2, 'Ingresa el nombre de la universidad'),
-    semestre: z.string().min(1, 'Ingresa el semestre actual'),
-})
-
-export type CreateInternFormValues = z.infer<typeof createInternSchema>
 
 const defaultValues: CreateInternFormValues = {
     username: '',
     email: '',
     password: '',
-    rol: 'becario',
+    rol: Roles.USER,
     first_name: '',
     last_name: '',
     sexo: 'M',
-    fecha_nacimiento: '',
+    fecha_nacimiento: new Date(),
     carrera: '',
     universidad: '',
     semestre: '',
@@ -52,18 +40,14 @@ const defaultValues: CreateInternFormValues = {
 
 type CreateInterFormProps = {
     formId?: string
-    onSubmit?: (values: CreateInternFormValues) => Promise<void> | void
     showFooter?: boolean
 }
 
-const selectClassName =
-    'border-input bg-background text-sm shadow-sm focus-visible:ring-ring focus-visible:outline-hidden h-10 w-full rounded-md border px-3 py-2'
-
 export default function CreateInterForm({
     formId = 'create-intern-form',
-    onSubmit,
     showFooter = true,
 }: CreateInterFormProps) {
+    const router = useRouter()
     const form = useForm<CreateInternFormValues>({
         resolver: zodResolver(createInternSchema),
         defaultValues,
@@ -72,16 +56,24 @@ export default function CreateInterForm({
 
     const handleSubmit = React.useCallback(
         async (values: CreateInternFormValues) => {
-            if (onSubmit) {
-                await onSubmit(values)
-                return
-            }
+            console.log({values})
+            await createUser(values)
+                .then((response) => {
+                    toast.success('Usuario creado con exito')
+                    router.push('/dashboard/admin/interns')
+                })
+                .catch((error: { data: any; status: number; code: string; message: string; internalCode: string; }) => {
+                    console.log(error)
+                    if (error.status === 401)
+                        toast.info("Revisa los datos del formulario")
+                    
+                    if (error.status === 500)
+                        toast.error('Error desconocido, intenta mas tarde')
 
-            toast.success('Formulario listo para enviar', {
-                description: 'Puedes conectar este formulario con tu API cuando este lista.',
-            })
+                    toast.error('No se pudo crear el usuario')
+                })
         },
-        [onSubmit]
+        []
     )
 
     return (
@@ -224,11 +216,18 @@ export default function CreateInterForm({
                                 <FormItem>
                                     <FormLabel>Sexo</FormLabel>
                                     <FormControl>
-                                        <select className={selectClassName} {...field}>
-                                            <option value="M">Masculino</option>
-                                            <option value="F">Femenino</option>
-                                            <option value="O">Otro</option>
-                                        </select>
+                                        <Select onValueChange={field.onChange} value={field.value}>
+                                            <SelectTrigger className='w-full'>
+                                                <SelectValue placeholder="Selecciona una opcion" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectGroup>
+                                                    <SelectItem value='M'>Masculino</SelectItem>
+                                                    <SelectItem value='F'>Femenino</SelectItem>
+                                                    <SelectItem value='O'>Otro</SelectItem>
+                                                </SelectGroup>
+                                            </SelectContent>
+                                        </Select>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -237,11 +236,11 @@ export default function CreateInterForm({
                         <FormField
                             control={form.control}
                             name="fecha_nacimiento"
-                            render={({ field }) => (
+                            render={({ field: { onChange,  ...field} }) => (
                                 <FormItem>
                                     <FormLabel>Fecha de nacimiento</FormLabel>
                                     <FormControl>
-                                        <Input type="date" {...field} />
+                                        <Input type="date" onChange={(e) => onChange(new Date(e.target.value))} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -304,6 +303,7 @@ export default function CreateInterForm({
                     </div>
                 </section>
 
+                <Button type='submit'>Guardar</Button>
                 {showFooter ? (
                     <div className="flex flex-col gap-3 border-t pt-6 md:flex-row md:items-center md:justify-between">
                         <p className="text-sm text-muted-foreground">
