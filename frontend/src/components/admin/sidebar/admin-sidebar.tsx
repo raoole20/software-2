@@ -58,7 +58,7 @@ type AdminSidebarProps = {
 
 const adminNavigation: DashboardSection[] = [
   {
-      title: "Vision general",
+    title: "Vision general",
     icon: LayoutDashboard,
     items: [
       {
@@ -81,6 +81,20 @@ const adminNavigation: DashboardSection[] = [
       },
     ],
   },
+  {
+    title: "Actividades",
+    icon: CalendarClock,
+    items: [
+      {
+        title: "Listado",
+        href: "/dashboard/admin/activity",
+      },
+      {
+        title: "Crear actividad",
+        href: "/dashboard/admin/activity/create",
+      },
+    ],
+  }, 
   {
     title: "Horas de oficina",
     icon: CalendarClock,
