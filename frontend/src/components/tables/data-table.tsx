@@ -38,7 +38,7 @@ import {
 import Link from "next/link"
 
 
-export function DataTable<T>({ data, columns, toolbarOptions }: { data: T[], columns: ColumnDef<T>[] , toolbarOptions?: { btnText: string, redirect: string } }) {
+export function DataTable<T>({ data, columns, toolbarOptions, searchKey = 'email' }: { data: T[], columns: ColumnDef<T>[], toolbarOptions?: { btnText: string, redirect: string }, searchKey?: string }) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -71,9 +71,9 @@ export function DataTable<T>({ data, columns, toolbarOptions }: { data: T[], col
       <div className="flex items-center py-4">
         <Input
           placeholder="Filtrar por Email..."
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+          value={(table?.getColumn(searchKey)?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
+            table?.getColumn(searchKey)?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
@@ -110,7 +110,7 @@ export function DataTable<T>({ data, columns, toolbarOptions }: { data: T[], col
                 {toolbarOptions.btnText}
               </Button>
             </Link>
-        )
+          )
         }
       </div>
       <div className="overflow-hidden rounded-md border">
@@ -124,9 +124,9 @@ export function DataTable<T>({ data, columns, toolbarOptions }: { data: T[], col
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                     </TableHead>
                   )
                 })}

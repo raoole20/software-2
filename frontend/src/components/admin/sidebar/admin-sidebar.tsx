@@ -162,13 +162,12 @@ export default function AdminSidebar({ user }: AdminSidebarProps) {
           href="/dashboard"
           className="flex items-center gap-3 rounded-md px-2 py-1.5"
         >
-          <Image
+          <img
             src="/img/logo/logo.png"
             alt="Logo"
             width={32}
             height={32}
             className="size-8 rounded"
-            priority
           />
           <span className="text-sm font-semibold tracking-tight group-data-[collapsible=icon]:hidden">
             Fundacion JB Opportunity
