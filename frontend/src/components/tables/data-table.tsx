@@ -35,16 +35,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-
-export type Payment = {
-  id: string
-  amount: number
-  status: "pending" | "processing" | "success" | "failed"
-  email: string
-}
+import Link from "next/link"
 
 
-export function DataTable<T>({ data, columns }: { data: T[], columns: ColumnDef<T>[] }) {
+export function DataTable<T>({ data, columns, toolbarOptions }: { data: T[], columns: ColumnDef<T>[] , toolbarOptions?: { btnText: string, redirect: string } }) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -76,7 +70,7 @@ export function DataTable<T>({ data, columns }: { data: T[], columns: ColumnDef<
     <div className="w-full">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter emails..."
+          placeholder="Filtrar por Email..."
           value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("email")?.setFilterValue(event.target.value)
@@ -86,7 +80,7 @@ export function DataTable<T>({ data, columns }: { data: T[], columns: ColumnDef<
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown />
+              Columnas <ChevronDown />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -109,6 +103,15 @@ export function DataTable<T>({ data, columns }: { data: T[], columns: ColumnDef<
               })}
           </DropdownMenuContent>
         </DropdownMenu>
+        {
+          toolbarOptions?.btnText && (
+            <Link href={toolbarOptions.redirect}>
+              <Button className="ml-5">
+                {toolbarOptions.btnText}
+              </Button>
+            </Link>
+        )
+        }
       </div>
       <div className="overflow-hidden rounded-md border">
         <Table>

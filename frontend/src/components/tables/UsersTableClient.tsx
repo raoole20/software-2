@@ -11,5 +11,5 @@ type Props = {
 }
 
 export default function UsersTableClient({ data, columns }: Props) {
-  return <DataTable<Users> data={data} columns={columns} />
+  return <DataTable<Users> data={data} columns={columns} toolbarOptions={{ btnText: "Nuevo usuario", redirect: "/dashboard/admin/interns/new/" }} />
 }
