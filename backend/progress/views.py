@@ -6,9 +6,25 @@ from users.models import Usuario
 from records.models import RegistroHoras
 from .serializers import ProgresoMetaSerializer, ProgresoGeneralSerializer
 from users.permissions import IsAdministrador
+from drf_spectacular.utils import extend_schema
 
 class ProgressViewSet(viewsets.ViewSet):
     
+    @extend_schema(
+        description="""**🎓 SOLO BECARIOS** - Ver mi progreso de metas
+        
+        Retorna el progreso actual del becario autenticado hacia el cumplimiento de sus metas de horas.
+        
+        **Permisos:**
+        - **Becarios:** Pueden ver su propio progreso detallado por tipo de actividad
+        - **Administradores:** No tienen acceso a este endpoint
+        
+        **Incluye:**
+        - Horas aprobadas por tipo de actividad (Voluntariado Interno, Externo, Chat de Inglés, Talleres)
+        - Porcentaje de cumplimiento para cada meta
+        - Horas restantes para alcanzar cada objetivo
+        """
+    )
     @action(detail=False, methods=['get'])
     def mi_progreso(self, request):
         user = request.user
@@ -57,6 +73,22 @@ class ProgressViewSet(viewsets.ViewSet):
         serializer = ProgresoMetaSerializer(progreso, many=True)
         return Response(serializer.data)
     
+    @extend_schema(
+        description="""**🎓 SOLO BECARIOS** - Ver mi historial de actividades
+        
+        Retorna el historial completo de actividades registradas por el becario autenticado.
+        
+        **Permisos:**
+        - **Becarios:** Pueden ver su propio historial con todos los estados (Aprobado, Pendiente, Rechazado)
+        - **Administradores:** No tienen acceso a este endpoint
+        
+        **Incluye:**
+        - Todas las actividades registradas
+        - Estado de aprobación de cada registro
+        - Horas reportadas y fechas de registro
+        - Detalles completos de cada actividad
+        """
+    )
     @action(detail=False, methods=['get'])
     def historial(self, request):
         user = request.user
@@ -66,6 +98,22 @@ class ProgressViewSet(viewsets.ViewSet):
         serializer = RegistroHorasSerializer(registros, many=True)
         return Response(serializer.data)
     
+    @extend_schema(
+        description="""**👑 SOLO ADMINISTRADORES** - Ver progreso general
+        
+        Retorna un dashboard con el progreso general de todos los becarios del sistema.
+        
+        **Permisos:**
+        - **Administradores:** Pueden ver el progreso general y estadísticas de todos los becarios
+        - **Becarios:** No tienen acceso a este endpoint
+        
+        **Incluye:**
+        - Estadísticas generales (total de becarios, total de horas aprobadas)
+        - Progreso individual de cada becario
+        - Porcentaje de cumplimiento por becario
+        - Comparativa entre horas aprobadas y metas establecidas
+        """
+    )
     @action(detail=False, methods=['get'])
     def progreso_general(self, request):
         if request.user.rol != 'administrador':
