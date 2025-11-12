@@ -5,6 +5,7 @@ from django.db.models import Q
 from .models import Actividad
 from .serializers import ActividadSerializer, ActividadCreateSerializer, AsignarBecariosSerializer
 from users.permissions import IsAdministrador
+from drf_spectacular.utils import extend_schema
 
 class ActividadViewSet(viewsets.ModelViewSet):
     queryset = Actividad.objects.all()
@@ -24,6 +25,84 @@ class ActividadViewSet(viewsets.ModelViewSet):
                 Q(en_catalogo=True) | Q(creador=user) | Q(becarios_asignados=user)
             ).prefetch_related('becarios_asignados').distinct()
     
+    @extend_schema(
+        description="""**🔐 BECARIOS Y ADMINISTRADORES** - Listar actividades
+        
+        Retorna las actividades disponibles en el sistema.
+        
+        **Permisos:**
+        - **Administradores:** Pueden ver todas las actividades
+        - **Becarios:** Solo pueden ver actividades del catálogo, las que han creado y las asignadas a ellos
+        """
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+    @extend_schema(
+        description="""**🔐 BECARIOS Y ADMINISTRADORES** - Obtener actividad específica
+        
+        Retorna los detalles de una actividad específica.
+        
+        **Permisos:**
+        - **Administradores:** Pueden ver cualquier actividad
+        - **Becarios:** Solo pueden ver actividades del catálogo, las que han creado y las asignadas a ellos
+        """
+    )
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
+
+    @extend_schema(
+        description="""**🔐 BECARIOS Y ADMINISTRADORES** - Crear actividad
+        
+        Permite crear una nueva actividad en el sistema.
+        
+        **Permisos:**
+        - **Administradores:** Las actividades se crean automáticamente en el catálogo
+        - **Becarios:** Las actividades se crean como pendientes de aprobación
+        """
+    )
+    def create(self, request, *args, **kwargs):
+        return super().create(request, *args, **kwargs)
+
+    @extend_schema(
+        description="""**🔐 BECARIOS Y ADMINISTRADORES** - Actualizar actividad
+        
+        Permite modificar una actividad existente.
+        
+        **Permisos:**
+        - **Administradores:** Pueden modificar cualquier actividad
+        - **Becarios:** Solo pueden modificar las actividades que han creado
+        """
+    )
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs)
+
+    @extend_schema(
+        description="""**🔐 BECARIOS Y ADMINISTRADORES** - Actualización parcial de actividad
+        
+        Permite modificar parcialmente una actividad existente.
+        
+        **Permisos:**
+        - **Administradores:** Pueden modificar cualquier actividad
+        - **Becarios:** Solo pueden modificar las actividades que han creado
+        """
+    )
+    def partial_update(self, request, *args, **kwargs):
+        return super().partial_update(request, *args, **kwargs)
+
+    @extend_schema(
+        description="""**🔐 BECARIOS Y ADMINISTRADORES** - Eliminar actividad
+        
+        Permite eliminar una actividad del sistema.
+        
+        **Permisos:**
+        - **Administradores:** Pueden eliminar cualquier actividad
+        - **Becarios:** Solo pueden eliminar las actividades que han creado
+        """
+    )
+    def destroy(self, request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)
+    
     def perform_create(self, serializer):
         user = self.request.user
         if user.rol == 'administrador':
@@ -31,7 +110,16 @@ class ActividadViewSet(viewsets.ModelViewSet):
         else:
             serializer.save(creador=user, en_catalogo=False)
 
-    #  asignar becarios a una actividad
+    @extend_schema(
+        description="""**👑 SOLO ADMINISTRADORES** - Asignar becarios a actividad
+        
+        Permite asignar uno o múltiples becarios a una actividad específica.
+        
+        **Permisos:**
+        - **Administradores:** Pueden asignar becarios a cualquier actividad
+        - **Becarios:** No tienen acceso a esta funcionalidad
+        """
+    )
     @action(detail=True, methods=['post'], permission_classes=[IsAdministrador])
     def asignar_becarios(self, request, pk=None):
         actividad = self.get_object()
@@ -65,7 +153,16 @@ class ActividadViewSet(viewsets.ModelViewSet):
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    # ver actividades asignadas (para becarios)
+    @extend_schema(
+        description="""**🎓 SOLO BECARIOS** - Ver mis actividades asignadas
+        
+        Retorna la lista de actividades que han sido asignadas al becario autenticado.
+        
+        **Permisos:**
+        - **Becarios:** Pueden ver sus actividades asignadas
+        - **Administradores:** No tienen acceso a este endpoint
+        """
+    )
     @action(detail=False, methods=['get'])
     def mis_actividades_asignadas(self, request):
         if request.user.rol != 'becario':
@@ -78,7 +175,16 @@ class ActividadViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(actividades, many=True)
         return Response(serializer.data)
 
-    # quitar becarios de una actividad
+    @extend_schema(
+        description="""**👑 SOLO ADMINISTRADORES** - Quitar becarios de actividad
+        
+        Permite remover uno o múltiples becarios de una actividad específica.
+        
+        **Permisos:**
+        - **Administradores:** Pueden quitar becarios de cualquier actividad
+        - **Becarios:** No tienen acceso a esta funcionalidad
+        """
+    )
     @action(detail=True, methods=['post'], permission_classes=[IsAdministrador])
     def quitar_becarios(self, request, pk=None):
         actividad = self.get_object()
