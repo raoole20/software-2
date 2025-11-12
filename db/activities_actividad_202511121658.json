@@ -1,0 +1,33 @@
+{
+"activities_actividad": [
+	{
+		"id" : 1,
+		"titulo" : "actividad 01",
+		"descripcion" : "esto es una actividad",
+		"tipo" : "Externa",
+		"fecha" : "2025-11-10",
+		"duracion_horas" : 1,
+		"competencia_desarrollada" : "",
+		"modalidad" : "V",
+		"organizacion" : "",
+		"facilitador" : "",
+		"en_catalogo" : 1,
+		"fecha_creacion" : "2025-11-10 15:27:37.429462",
+		"creador_id" : 1
+	},
+	{
+		"id" : 2,
+		"titulo" : "actividad",
+		"descripcion" : "actividad generia 1999",
+		"tipo" : "Interna",
+		"fecha" : "2025-11-10",
+		"duracion_horas" : 1,
+		"competencia_desarrollada" : "",
+		"modalidad" : "P",
+		"organizacion" : "urbe",
+		"facilitador" : "urbe",
+		"en_catalogo" : 1,
+		"fecha_creacion" : "2025-11-10 15:28:02.369990",
+		"creador_id" : 1
+	}
+]}

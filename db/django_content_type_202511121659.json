@@ -1,0 +1,58 @@
+{
+"django_content_type": [
+	{
+		"id" : 1,
+		"app_label" : "admin",
+		"model" : "logentry"
+	},
+	{
+		"id" : 2,
+		"app_label" : "auth",
+		"model" : "permission"
+	},
+	{
+		"id" : 3,
+		"app_label" : "auth",
+		"model" : "group"
+	},
+	{
+		"id" : 4,
+		"app_label" : "contenttypes",
+		"model" : "contenttype"
+	},
+	{
+		"id" : 5,
+		"app_label" : "sessions",
+		"model" : "session"
+	},
+	{
+		"id" : 6,
+		"app_label" : "authtoken",
+		"model" : "token"
+	},
+	{
+		"id" : 7,
+		"app_label" : "authtoken",
+		"model" : "tokenproxy"
+	},
+	{
+		"id" : 8,
+		"app_label" : "users",
+		"model" : "usuario"
+	},
+	{
+		"id" : 9,
+		"app_label" : "activities",
+		"model" : "actividad"
+	},
+	{
+		"id" : 10,
+		"app_label" : "records",
+		"model" : "registrohoras"
+	},
+	{
+		"id" : 11,
+		"app_label" : "progress",
+		"model" : "progresometa"
+	}
+]}

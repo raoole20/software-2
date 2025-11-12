@@ -1,0 +1,159 @@
+{
+"django_migrations": [
+	{
+		"id" : 1,
+		"app" : "contenttypes",
+		"name" : "0001_initial",
+		"applied" : "2025-10-13 15:04:20.987186"
+	},
+	{
+		"id" : 2,
+		"app" : "contenttypes",
+		"name" : "0002_remove_content_type_name",
+		"applied" : "2025-10-13 15:04:20.998618"
+	},
+	{
+		"id" : 3,
+		"app" : "auth",
+		"name" : "0001_initial",
+		"applied" : "2025-10-13 15:04:21.018013"
+	},
+	{
+		"id" : 4,
+		"app" : "auth",
+		"name" : "0002_alter_permission_name_max_length",
+		"applied" : "2025-10-13 15:04:21.032967"
+	},
+	{
+		"id" : 5,
+		"app" : "auth",
+		"name" : "0003_alter_user_email_max_length",
+		"applied" : "2025-10-13 15:04:21.043800"
+	},
+	{
+		"id" : 6,
+		"app" : "auth",
+		"name" : "0004_alter_user_username_opts",
+		"applied" : "2025-10-13 15:04:21.054031"
+	},
+	{
+		"id" : 7,
+		"app" : "auth",
+		"name" : "0005_alter_user_last_login_null",
+		"applied" : "2025-10-13 15:04:21.064261"
+	},
+	{
+		"id" : 8,
+		"app" : "auth",
+		"name" : "0006_require_contenttypes_0002",
+		"applied" : "2025-10-13 15:04:21.115936"
+	},
+	{
+		"id" : 9,
+		"app" : "auth",
+		"name" : "0007_alter_validators_add_error_messages",
+		"applied" : "2025-10-13 15:04:21.163855"
+	},
+	{
+		"id" : 10,
+		"app" : "auth",
+		"name" : "0008_alter_user_username_max_length",
+		"applied" : "2025-10-13 15:04:21.185651"
+	},
+	{
+		"id" : 11,
+		"app" : "auth",
+		"name" : "0009_alter_user_last_name_max_length",
+		"applied" : "2025-10-13 15:04:21.192994"
+	},
+	{
+		"id" : 12,
+		"app" : "auth",
+		"name" : "0010_alter_group_name_max_length",
+		"applied" : "2025-10-13 15:04:21.203233"
+	},
+	{
+		"id" : 13,
+		"app" : "auth",
+		"name" : "0011_update_proxy_permissions",
+		"applied" : "2025-10-13 15:04:21.208390"
+	},
+	{
+		"id" : 14,
+		"app" : "auth",
+		"name" : "0012_alter_user_first_name_max_length",
+		"applied" : "2025-10-13 15:04:21.215403"
+	},
+	{
+		"id" : 15,
+		"app" : "users",
+		"name" : "0001_initial",
+		"applied" : "2025-10-13 15:04:21.235753"
+	},
+	{
+		"id" : 16,
+		"app" : "activities",
+		"name" : "0001_initial",
+		"applied" : "2025-10-13 15:04:21.248891"
+	},
+	{
+		"id" : 17,
+		"app" : "admin",
+		"name" : "0001_initial",
+		"applied" : "2025-10-13 15:04:21.265477"
+	},
+	{
+		"id" : 18,
+		"app" : "admin",
+		"name" : "0002_logentry_remove_auto_add",
+		"applied" : "2025-10-13 15:04:21.278877"
+	},
+	{
+		"id" : 19,
+		"app" : "admin",
+		"name" : "0003_logentry_add_action_flag_choices",
+		"applied" : "2025-10-13 15:04:21.288135"
+	},
+	{
+		"id" : 20,
+		"app" : "authtoken",
+		"name" : "0001_initial",
+		"applied" : "2025-10-13 15:04:21.300167"
+	},
+	{
+		"id" : 21,
+		"app" : "authtoken",
+		"name" : "0002_auto_20160226_1747",
+		"applied" : "2025-10-13 15:04:21.330748"
+	},
+	{
+		"id" : 22,
+		"app" : "authtoken",
+		"name" : "0003_tokenproxy",
+		"applied" : "2025-10-13 15:04:21.335651"
+	},
+	{
+		"id" : 23,
+		"app" : "authtoken",
+		"name" : "0004_alter_tokenproxy_options",
+		"applied" : "2025-10-13 15:04:21.342389"
+	},
+	{
+		"id" : 24,
+		"app" : "progress",
+		"name" : "0001_initial",
+		"applied" : "2025-10-13 15:04:21.358918"
+	},
+	{
+		"id" : 25,
+		"app" : "records",
+		"name" : "0001_initial",
+		"applied" : "2025-10-13 15:04:21.376101"
+	},
+	{
+		"id" : 26,
+		"app" : "sessions",
+		"name" : "0001_initial",
+		"applied" : "2025-10-13 15:04:21.384066"
+	}
+]}
