@@ -94,3 +94,65 @@ Si necesitas personalizar o documentar mejor endpoints, puedes usar:
   "password": "31135242c"
 }
 ```
+
+## Crear / recrear las tablas (migraciones)
+
+Si las tablas de la base de datos SQLite no existen o quieres recrearlas, sigue estos pasos desde PowerShell en la raíz del proyecto.
+
+1. Activa la virtualenv (si no está activa):
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+2. Genera migraciones (si hiciste cambios en modelos):
+
+```powershell
+# Crea/actualiza los archivos de migración para las apps que cambiaron
+python backend/manage.py makemigrations
+```
+
+3. Aplica las migraciones para crear las tablas en `backend/db.sqlite3`:
+
+```powershell
+python backend/manage.py migrate
+```
+
+4. Verifica qué migraciones están aplicadas:
+
+```powershell
+python backend/manage.py showmigrations
+```
+
+5. (Opcional, destruye y recrea la base de datos) — ADVERTENCIA: esto borra todos los datos:
+
+```powershell
+# Elimina el archivo sqlite y vuelve a aplicar migraciones limpias
+Remove-Item .\backend\db.sqlite3 -Force
+python backend/manage.py migrate
+```
+
+6. Cargar datos de ejemplo (seed)
+
+Si usas el comando `seed_users` incluido en este proyecto, ejecútalo después de aplicar las migraciones:
+
+```powershell
+python backend/manage.py seed_users
+# Para actualizar usuarios existentes
+python backend/manage.py seed_users --update
+# Para usar otro archivo CSV
+python backend/manage.py seed_users --file path\to\file.csv
+```
+
+7. Problemas comunes
+
+- Si `migrate` falla, ejecuta con `--traceback` para ver la traza completa:
+
+```powershell
+python backend/manage.py migrate --traceback
+```
+
+- Si el editor muestra import errors (p. ej. `Import "django..." could not be resolved`), asegúrate de que VS Code está usando la misma Python/venv que activas en PowerShell.
+- Si alguna app en `INSTALLED_APPS` lanza excepciones al importarse, corrige esas excepciones primero (revisa `apps.py` y `models.py`).
+
+Haz una copia de seguridad del archivo `backend/db.sqlite3` antes de eliminarlo si necesitas conservar los datos.
