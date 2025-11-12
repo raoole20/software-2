@@ -18,10 +18,12 @@ import { createActivity } from '@/server/activities'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Users } from '@/types/user'
+import { Roles } from '@/types/roles'
 
-export default function ActivityFormClient() {
+export default function ActivityFormClient({ allUsers }: { allUsers: Users[] }) {
     const router = useRouter()
-    // Use a loose form typing to avoid strict resolver/type incompatibilities
+
     const form = useForm<any>({
         resolver: yupResolver(ActivitySchema) as any,
         defaultValues: {
@@ -39,6 +41,8 @@ export default function ActivityFormClient() {
     })
 
     const { handleSubmit, formState: { isSubmitting } } = form
+
+    const facilitador = allUsers.filter(user => user.rol == Roles.ADMIN);
 
     async function onSubmit(values: any) {
         try {
@@ -188,7 +192,18 @@ export default function ActivityFormClient() {
                             <FormItem>
                                 <FormLabel>Facilitador</FormLabel>
                                 <FormControl>
-                                    <Input {...(field as any)} />
+                                    <Select onValueChange={field.onChange} value={field.value}>
+                                        <SelectTrigger className="w-full">
+                                            <SelectValue placeholder="Selecciona facilitador" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {facilitador.map((user) => (
+                                                <SelectItem key={user.id} value={user.username}>
+                                                    {user.username}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>

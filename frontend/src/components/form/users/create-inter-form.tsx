@@ -59,18 +59,31 @@ export default function CreateInterForm({
             console.log({values})
             await createUser(values)
                 .then((response) => {
+                    if (response.error) {
+                        throw response
+                    }
+                    
                     toast.success('Usuario creado con exito')
                     router.push('/dashboard/admin/interns')
                 })
                 .catch((error: { data: any; status: number; code: string; message: string; internalCode: string; }) => {
                     console.log(error)
-                    if (error.status === 401)
-                        toast.info("Revisa los datos del formulario")
-                    
-                    if (error.status === 500)
-                        toast.error('Error desconocido, intenta mas tarde')
+                    debugger
+                    if (error.status === 400) {
+                        const fieldErrors = error.data;
+                        Object.keys(fieldErrors).forEach((field) => {
+                            form.setError(field as keyof CreateInternFormValues, {
+                                type: 'server',
+                                message: fieldErrors[field].join(' '),
+                            })
+                        });
+                        toast.error('Por favor corrige los errores en el formulario.')
+                        return;
+                    }
 
-                    toast.error('No se pudo crear el usuario')
+                    toast.error(
+                        error.message || 'Ocurrio un error al crear el usuario. Intenta nuevamente.'
+                    )
                 })
         },
         []

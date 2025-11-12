@@ -1,8 +1,11 @@
 import ActivityFormClient from '@/components/forms/ActivityFormClient'
 import React from 'react'
 import { Separator } from '@/components/ui/separator'
+import { getAllUsers } from '@/server/users'
 
-export default function Page() {
+export default async function Page() {
+    const allUsers = await getAllUsers();
+
     return (
         <div className="space-y-6">
             <header className="space-y-1">
@@ -19,7 +22,7 @@ export default function Page() {
                         <p className="text-sm text-muted-foreground">Rellena los datos principales para crear la actividad.</p>
                     </div>
 
-                    <ActivityFormClient />
+                    <ActivityFormClient allUsers={allUsers} />
                 </div>
             </section>
 
