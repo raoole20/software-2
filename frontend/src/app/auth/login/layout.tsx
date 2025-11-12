@@ -6,13 +6,14 @@ import Image from 'next/image';
 export default function Layout({ children }: { children: React.ReactNode }) {
     return (
         <div className='w-full max-w-[90%] md:max-w-sm space-y-5'>
-            <img
+            <Image
                 src="/img/logo/logo.png"
                 alt="Logo-avaa"
                 width={200}
                 height={200}
                 className="mx-auto"
                 style={{ width: '100%', height: 'auto', maxWidth: 200 }}
+                priority
             />
             <Tabs defaultValue="collaborator" className="w-full max-w-md mb-4 space-y-5">
                 <TabsList className='w-full'>

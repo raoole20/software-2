@@ -17,7 +17,6 @@ export default async function Page({ params }: { params: { id: string } }) {
         <SidebarGroup>
           <SidebarGroupLabel>Actividad</SidebarGroupLabel>
           <SidebarGroupContent>
-            {/* Use the shared client form component that handles submit/cancel and shows the ID */}
             <SidebarAsignHours id={id} />
           </SidebarGroupContent>
         </SidebarGroup>

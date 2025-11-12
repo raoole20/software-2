@@ -20,6 +20,7 @@ import { AuthLoginType } from "@/types"
 import { AuthLoginSchema } from "@/lib/validators"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
+import PasswordInput from "@/components/common/password-input"
 
 
 export default function LoginForm() {
@@ -53,8 +54,8 @@ export default function LoginForm() {
 
     return (
         <Form {...form}>
-            <form onSubmit={handleSubmit(onSubmit)} className="w-full">
-                <div className="space-y-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="w-full ">
+                <div className="space-y-5">
                     <FormField
                         control={form.control}
                         name="email"
@@ -76,7 +77,7 @@ export default function LoginForm() {
                             <FormItem>
                                 <FormLabel>Contraseña</FormLabel>
                                 <FormControl>
-                                    <Input type="password" {...field} placeholder="••••••••" />
+                                    <PasswordInput {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
