@@ -1,95 +1,168 @@
 "use client"
 
+"use client"
+
 import React from 'react'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useForm } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from '@/components/ui/form'
 import { cn } from '@/lib/utils'
 
 interface Props {
   id?: string
+  /** optional token to authenticate the request; if not provided will try localStorage.getItem('token') */
+  token?: string
+  /** optional server action passed from a parent server component. If provided it will be used to create the registro. */
+  onCreate?: (data: { actividad?: number; descripcion_manual?: string; horas_reportadas: string | number }) => Promise<any>
 }
 
-export default function SidebarAsignHours({ id }: Props) {
+export default function SidebarAsignHours({ id, token, onCreate }: Props) {
   const router = useRouter()
-  const [hours, setHours] = useState<number | ''>('')
-  const [notes, setNotes] = useState('')
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [serverError, setServerError] = useState<string | null>(null)
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  type FormValues = {
+    horas_reportadas: string
+    descripcion_manual: string
+    actividad?: number
+  }
+
+  const form = useForm<FormValues>({
+    mode: 'onChange',
+    defaultValues: {
+      actividad: id ? Number(id) : undefined,
+      horas_reportadas: '',
+      descripcion_manual: '',
+    }
+  })
+
+
+  const submit = async (data: FormValues) => {
+    setServerError(null)
     setLoading(true)
     try {
-      // simple client-side validation before submit
-      if (hours === '' || Number.isNaN(hours) || (typeof hours === 'number' && hours < 0)) {
-        setError('Ingresa un número válido (≥ 0)')
-        setLoading(false)
-        return
+
+      const payload = {
+        actividad:  (id ? Number(id) : undefined),
+        descripcion_manual: data.descripcion_manual,
+        horas_reportadas: data.horas_reportadas,
       }
 
-      // TODO: call server action / API to save assigned hours
-      // For now we log, wait a bit and navigate back
-      console.log('Assigning hours', { id, hours, notes })
-      await new Promise((r) => setTimeout(r, 500))
+      if (onCreate) {
+        await onCreate(payload)
+      } 
 
-      // navigate back to previous route (close sidebar)
       router.back()
-    } catch (err) {
+    } catch (err: any) {
       console.error(err)
+      setServerError(err?.message ?? String(err))
+    } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="p-4">
-      <h2 className="text-lg font-semibold mb-4">Asignar horas</h2>
-      <form onSubmit={handleSubmit} className="space-y-3">
-        <div>
-          <Label className="text-sm">Actividad</Label>
-          <div className="text-sm text-muted-foreground">{id ?? 'N/A'}</div>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(submit)} className="flex h-full flex-col justify-between">
+        {/* Content area */}
+        <div className="flex-1 space-y-4 p-4">
+          {/* Activity Info */}
+          <div className="flex items-center justify-between rounded-lg border bg-muted/20 p-3">
+            <span className="text-sm font-medium text-muted-foreground">ID Actividad</span>
+            <span className="rounded-md bg-primary/10 px-2 py-1 text-sm font-mono text-primary">
+              {id ?? 'N/A'}
+            </span>
+          </div>
+
+          {/* Form Fields */}
+          <div className="space-y-4">
+            <FormField
+              control={form.control}
+              name="horas_reportadas"
+              rules={{
+                required: 'Las horas son requeridas',
+                validate: v => {
+                  const n = Number(v);
+                  return (!isNaN(n) && n >= 0) || 'Ingresa un número válido (≥ 0)';
+                }
+              }}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium">Horas trabajadas</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      step="0.25"
+                      placeholder="Ej. 2.5"
+                      {...field}
+                      className="h-10"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="descripcion_manual"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium">Descripción del trabajo realizado</FormLabel>
+                  <FormControl>
+                    <textarea 
+                      {...field} 
+                      rows={4} 
+                      placeholder="Describe brevemente las actividades realizadas..."
+                      className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          {/* Error Message */}
+          {serverError && (
+            <div className="rounded-md border border-destructive/20 bg-destructive/10 p-3">
+              <p className="text-sm text-destructive">{serverError}</p>
+            </div>
+          )}
         </div>
 
-        <div>
-          <Label className="text-sm">Horas</Label>
-          <Input
-            type="number"
-            value={hours as any}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              const v = e.target.value
-              const num = v === '' ? '' : Number(v)
-              setHours(num)
-              // validate lightly on change
-              if (v === '' || Number.isNaN(num) || (typeof num === 'number' && num < 0)) {
-                setError('Ingresa un número válido (≥ 0)')
-              } else {
-                setError(null)
-              }
-            }}
-            min={0}
-            aria-invalid={!!error}
-            className={cn('w-full', error ? 'border-red-500' : '')}
-            aria-describedby={error ? 'hours-error' : undefined}
-          />
-          {error ? <p id="hours-error" className="text-xs text-red-500 mt-1">{error}</p> : <p className="text-xs text-muted-foreground mt-1">Ingresa las horas asignadas</p>}
-        </div>
-
-        <div>
-          <Label className="text-sm">Notas (opcional)</Label>
-          <textarea value={notes} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNotes(e.target.value)} rows={3} className="mt-1 w-full rounded-md border px-2 py-1" />
-        </div>
-
-        <div className="flex gap-2">
-          <Button type="submit" disabled={loading || hours === '' || !!error}>
-            {loading ? 'Guardando...' : 'Guardar'}
-          </Button>
-          <Button type="button" variant="ghost" onClick={() => router.back()}>
-            Cancelar
-          </Button>
+        {/* Footer with Actions */}
+        <div className="border-t bg-muted/20 p-4">
+          <div className="flex items-center gap-2">
+            <Button 
+              type="submit" 
+              className="flex-1" 
+              disabled={loading || !form.formState.isValid}
+            >
+              {loading ? 'Guardando...' : 'Registrar horas'}
+            </Button>
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={() => router.back()}
+              disabled={loading}
+            >
+              Cancelar
+            </Button>
+          </div>
         </div>
       </form>
-    </div>
+    </Form>
   )
 }

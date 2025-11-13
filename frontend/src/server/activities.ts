@@ -69,5 +69,43 @@ export async function getAllActivities() {
     }
 }
 
+export type RegistroHorasDTO = {
+    actividad?: number;
+    descripcion_manual?: string;
+    horas_reportadas: string | number;
+}
+
+export async function createRegistroHoras(data: RegistroHorasDTO) {
+    const session = await getSession();
+    try {
+        const response = await request.post('/api/records/registros-horas/', data, {
+            headers: {
+                'Authorization': `Token ${session?.accessToken}`
+            }
+        });
+
+        return response.data
+    } catch (error) {
+        if (error instanceof AxiosError) {
+            console.error('Error creating registro horas:', error.response?.data || error.message);
+            throw {
+                message: error.cause || 'Error creating registro horas',
+                status: error.response?.status || 500,
+                controller: true,
+                data: error.response?.data || { detail: error.message },
+                originalError: error
+            }
+        }
+
+        throw {
+            message: 'Unexpected error creating registro horas',
+            status: 500,
+            controller: false,
+            originalError: error,
+            data: null
+        }
+    }
+}
+
 
 

@@ -1,7 +1,6 @@
 import React from 'react'
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuItem } from '@/components/ui/sidebar'
-import CloseButton from './CloseButton'
-import SidebarAsignHours from '@/app/dashboard/(collaborators)/interns/activity/components/SidebarAsignHours'
+import SidebarAsignHours from '@/app/dashboard/(collaborators)/interns/activity/components/SidebarAsignHoursServer'
 
 export default async function Page({ params }: { params: { id: string } }) {
   const { id } = params
@@ -10,7 +9,6 @@ export default async function Page({ params }: { params: { id: string } }) {
     <Sidebar variant="floating" side="right" className="absolute max-h-[80vh] w-96">
       <SidebarHeader>
         <h5 className="text-lg font-semibold">Registrar horas</h5>
-        <CloseButton />
       </SidebarHeader>
 
       <SidebarContent>
