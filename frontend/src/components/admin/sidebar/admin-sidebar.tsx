@@ -95,7 +95,7 @@ const adminNavigation: DashboardSection[] = [
       },
       {
         title: "Listado de horas",
-        href: "/dashboard/admin/hours", 
+        href: "/dashboard/admin/activity/hours", 
       }
     ],
   }, 

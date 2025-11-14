@@ -1,6 +1,6 @@
 'use server';
 
-import { Activity, ActivityDTO } from "@/types/activiy";
+import { Activity, ActivityDTO, Hours } from "@/types/activiy";
 import { request } from "./request";
 import { getSession } from "@/lib";
 import { AxiosError } from "axios";
@@ -116,5 +116,42 @@ export async function createRegistroHoras(data: RegistroHorasDTO) {
     }
 }
 
+export async function getAllPendingHours() {
+    const session = await getSession();
+    try {
+        const response = await request.get<Hours[]>('/api/records/registros-horas/pendientes/', {
+            headers: {  
+                'Authorization': `Token ${session?.accessToken}`
+            }
+        });
+        return {
+            message: 'Pending hours fetched successfully',
+            status: 200,
+            controller: true,
+            data: response.data,
+            originalError: null,
+            error: false,
+        }
+    } catch (error) {
+        if (error instanceof AxiosError) {
+            console.error('Error fetching pending hours:', error.response?.data || error.message);
+            return {
+                message: error.cause || 'Error fetching pending hours',
+                status: error.response?.status || 500,
+                controller: true,
+                data: error.response?.data || { detail: error.message },
+                originalError: error,
+                error: true
+            }
+        }
 
-
+        return {
+            message: 'Unexpected error fetching pending hours',
+            status: 500,
+            controller: false,
+            originalError: error,
+            data: null,
+            error: true
+        }
+    }
+}
