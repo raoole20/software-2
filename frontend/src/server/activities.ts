@@ -1,6 +1,6 @@
 'use server';
 
-import { Activity, ActivityDTO } from "@/types/activiy";
+import { Activity, ActivityDTO, Hours, RegistroHorasDTO } from "@/types/activiy";
 import { request } from "./request";
 import { getSession } from "@/lib";
 import { AxiosError } from "axios";
@@ -68,13 +68,6 @@ export async function getAllActivities() {
         }
     }
 }
-
-export type RegistroHorasDTO = {
-    actividad?: number;
-    descripcion_manual?: string;
-    horas_reportadas: string | number;
-}
-
 export async function createRegistroHoras(data: RegistroHorasDTO) {
     const session = await getSession();
     try {
@@ -108,4 +101,34 @@ export async function createRegistroHoras(data: RegistroHorasDTO) {
 }
 
 
+export async function getAllHours() {
+    const session = await getSession();
+    try {
+        const response = await request.get<Hours[]>(`/api/records/registros-horas`)
+
+        return {
+            data: response.data,
+            status: response.status,
+            error: false,
+            message: 'Fetched successfully'
+        }
+    } catch (error) {
+        if (error instanceof AxiosError) {
+            console.error('Error fetching hours:', error.response?.data || error.message);
+            return {
+                data: null,
+                status: error.response?.status || 500,
+                error: true,
+                message: error.cause || 'Error fetching hours'
+            }
+        }
+
+        return {
+            data: null,
+            status: 500,
+            error: true,
+            message: 'Unexpected error fetching hours'
+        }
+    }
+}
 
