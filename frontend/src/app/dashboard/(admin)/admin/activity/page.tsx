@@ -7,9 +7,14 @@ import { activitiesColumns } from './components/columns/activity-column'
 export default async function Page() {
     const activities = await getAllActivities();
 
+    if(activities.error) {
+        return (
+            <div>Error cargando las actividades: {activities.error}</div>
+        )   
+    }
     return (
         <div>
-            <DataTable data={activities} columns={activitiesColumns} toolbarOptions={{ btnText: 'Crear actividad', redirect: '/dashboard/admin/activity/create' }} />
+            <DataTable data={activities.data} columns={activitiesColumns} toolbarOptions={{ btnText: 'Crear actividad', redirect: '/dashboard/admin/activity/create' }} />
         </div>
     )
 }

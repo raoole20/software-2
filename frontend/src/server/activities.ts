@@ -46,25 +46,34 @@ export async function getAllActivities() {
             }
         });
     
-        return response.data
+        return {
+            message: 'Activities fetched successfully',
+            status: 200,
+            controller: true,
+            data: response.data,
+            originalError: null,
+            error: false,
+        }
     } catch (error) {
         if (error instanceof AxiosError) {
             console.error('Error fetching activities:', error.response?.data || error.message);
-            throw {
+            return {
                 message: error.cause || 'Error fetching activities',
                 status: error.response?.status || 500,
                 controller: true,
                 data: error.response?.data || { detail: error.message },
-                originalError: error
+                originalError: error,
+                error: true,
             }
         }
 
-        throw {
+        return {
             message: 'Unexpected error fetching activities',
             status: 500,
             controller: false,
             originalError: error,
-            data: null
+            data: null,
+            error: true,
         }
     }
 }
