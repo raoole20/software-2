@@ -6,10 +6,11 @@ import React from 'react'
 
 export default async function Page() {
   const actividad = await getAllActivities(); // by user id in a real scenario
+
   return (
     <div className='w-full'>
       Mis actividades - Asignar horas
-      <DataTable data={actividad} columns={actividadesColumn} searchKey='facilitador' />
+      <DataTable data={actividad.data} columns={actividadesColumn} searchKey='facilitador' />
     </div>
   )
 }

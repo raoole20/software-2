@@ -94,8 +94,8 @@ const adminNavigation: DashboardSection[] = [
         href: "/dashboard/admin/activity/create",
       },
       {
-        title: "Listado de Horas",
-        href: "/dashboard/admin/activity/registered-hours",
+        title: "Listado de horas",
+        href: "/dashboard/admin/activity/hours", 
       }
     ],
   }, 

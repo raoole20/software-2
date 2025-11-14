@@ -21,15 +21,7 @@ export type ActivityDTO = Omit<Activity, 'id' | 'creador' | 'creador_nombre' | '
 }
 
 
-
-export type RegistroHorasDTO = {
-    actividad?: number;
-    descripcion_manual?: string;
-    horas_reportadas: string | number;
-}
-
 export interface Hours {
-    
     id:                   number;
     becario:              number;
     becario_nombre:       string;

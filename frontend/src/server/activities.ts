@@ -1,6 +1,6 @@
 'use server';
 
-import { Activity, ActivityDTO, Hours, RegistroHorasDTO } from "@/types/activiy";
+import { Activity, ActivityDTO, Hours } from "@/types/activiy";
 import { request } from "./request";
 import { getSession } from "@/lib";
 import { AxiosError } from "axios";
@@ -46,25 +46,34 @@ export async function getAllActivities() {
             }
         });
     
-        return response.data
+        return {
+            message: 'Activities fetched successfully',
+            status: 200,
+            controller: true,
+            data: response.data,
+            originalError: null,
+            error: false,
+        }
     } catch (error) {
         if (error instanceof AxiosError) {
             console.error('Error fetching activities:', error.response?.data || error.message);
-            throw {
+            return {
                 message: error.cause || 'Error fetching activities',
                 status: error.response?.status || 500,
                 controller: true,
                 data: error.response?.data || { detail: error.message },
-                originalError: error
+                originalError: error,
+                error: true,
             }
         }
 
-        throw {
+        return {
             message: 'Unexpected error fetching activities',
             status: 500,
             controller: false,
             originalError: error,
-            data: null
+            data: null,
+            error: true,
         }
     }
 }
@@ -100,35 +109,42 @@ export async function createRegistroHoras(data: RegistroHorasDTO) {
     }
 }
 
-
-export async function getAllHours() {
+export async function getAllPendingHours() {
     const session = await getSession();
     try {
-        const response = await request.get<Hours[]>(`/api/records/registros-horas`)
-
+        const response = await request.get<Hours[]>('/api/records/registros-horas/pendientes/', {
+            headers: {  
+                'Authorization': `Token ${session?.accessToken}`
+            }
+        });
         return {
+            message: 'Pending hours fetched successfully',
+            status: 200,
+            controller: true,
             data: response.data,
-            status: response.status,
+            originalError: null,
             error: false,
-            message: 'Fetched successfully'
         }
     } catch (error) {
         if (error instanceof AxiosError) {
-            console.error('Error fetching hours:', error.response?.data || error.message);
+            console.error('Error fetching pending hours:', error.response?.data || error.message);
             return {
-                data: null,
+                message: error.cause || 'Error fetching pending hours',
                 status: error.response?.status || 500,
-                error: true,
-                message: error.cause || 'Error fetching hours'
+                controller: true,
+                data: error.response?.data || { detail: error.message },
+                originalError: error,
+                error: true
             }
         }
 
         return {
-            data: null,
+            message: 'Unexpected error fetching pending hours',
             status: 500,
-            error: true,
-            message: 'Unexpected error fetching hours'
+            controller: false,
+            originalError: error,
+            data: null,
+            error: true
         }
     }
 }
-
