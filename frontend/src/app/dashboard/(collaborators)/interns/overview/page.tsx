@@ -1,4 +1,4 @@
-'use client'
+
 import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { ChartPie } from '@/components/common/piechart'

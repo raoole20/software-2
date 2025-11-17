@@ -12,6 +12,7 @@ const PUBLIC_FILE = [
   "/api/schema/redoc",
   "/_next",
   "/static",
+  "/"
 ];
 
 export function middleware(req: NextRequest) {

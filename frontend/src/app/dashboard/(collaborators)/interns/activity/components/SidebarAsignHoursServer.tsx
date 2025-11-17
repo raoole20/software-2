@@ -1,5 +1,6 @@
+import { RegistroHorasDTO } from '@/types/activiy'
 import SidebarAsignHours from './SidebarAsignHours'
-import { createRegistroHoras, RegistroHorasDTO } from '@/server/activities'
+import { createRegistroHoras } from '@/server/activities'
 
 interface Props {
   id?: string

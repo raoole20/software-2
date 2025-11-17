@@ -77,13 +77,6 @@ export async function getAllActivities() {
         }
     }
 }
-
-export type RegistroHorasDTO = {
-    actividad?: number;
-    descripcion_manual?: string;
-    horas_reportadas: string | number;
-}
-
 export async function createRegistroHoras(data: RegistroHorasDTO) {
     const session = await getSession();
     try {
