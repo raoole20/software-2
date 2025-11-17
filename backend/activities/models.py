@@ -35,5 +35,11 @@ class Actividad(models.Model):
         limit_choices_to={'rol': 'becario'}  # Solo se pueden asignar becarios
     )
 
+    is_active = models.BooleanField(default=True, help_text="Desactivar en lugar de eliminar")
+
+
     def __str__(self):
         return self.titulo
+    
+    objects = models.Manager()
+    active_objects = models.Manager()

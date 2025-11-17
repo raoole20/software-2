@@ -19,13 +19,65 @@ class ActividadViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         if user.rol == 'administrador':
-            return Actividad.objects.all().prefetch_related('becarios_asignados')
+            return Actividad.objects.filter(is_active=True).prefetch_related('becarios_asignados')
         else:
             # Becarios solo ven actividades que están en catálogo Y que están asignadas a ellos
             # O actividades que ellos mismos crearon
             return Actividad.objects.filter(
                 Q(en_catalogo=True, becarios_asignados=user) | Q(creador=user)
             ).prefetch_related('becarios_asignados').distinct()
+        
+    @extend_schema(
+        description="""**👑 SOLO ADMINISTRADORES** - Desactivar actividad
+        
+        Desactiva una actividad (soft delete) en lugar de eliminarla permanentemente.
+        La actividad ya no será visible para los becarios pero sus datos se mantienen.
+        
+        **Permisos:**
+        - **Administradores:** Pueden desactivar cualquier actividad
+        - **Becarios:** No tienen acceso a esta funcionalidad
+        """
+    )
+    @action(detail=True, methods=['post'], permission_classes=[IsAdministrador])
+    def desactivar(self, request, pk=None):
+        actividad = self.get_object()
+        actividad.is_active = False
+        actividad.save()
+        
+        return Response({
+            'message': f'Actividad "{actividad.titulo}" desactivada correctamente',
+            'actividad_id': actividad.id,
+            'estado': 'desactivada'
+        })
+    
+    # NUEVO: Endpoint para reactivar actividad
+    @extend_schema(
+        description="""**👑 SOLO ADMINISTRADORES** - Reactivar actividad
+        
+        Reactiva una actividad que había sido desactivada previamente.
+        
+        **Permisos:**
+        - **Administradores:** Pueden reactivar cualquier actividad
+        - **Becarios:** No tienen acceso a esta funcionalidad
+        """
+    )
+    @action(detail=True, methods=['post'], permission_classes=[IsAdministrador])
+    def reactivar(self, request, pk=None):
+        try:
+            actividad = Actividad.objects.get(id=pk, is_active=False)
+            actividad.is_active = True
+            actividad.save()
+            
+            return Response({
+                'message': f'Actividad "{actividad.titulo}" reactivada correctamente',
+                'actividad_id': actividad.id,
+                'estado': 'activada'
+            })
+        except Actividad.DoesNotExist:
+            return Response(
+                {'error': 'Actividad no encontrada o ya está activa'}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
     
     @extend_schema(
         description="""**🔐 BECARIOS Y ADMINISTRADORES** - Listar actividades
