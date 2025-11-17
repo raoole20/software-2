@@ -1,6 +1,11 @@
-'use client'
+"use client"
+import React, { useState } from 'react'
 import { Users } from "@/types/user"
 import { ColumnDef } from "@tanstack/react-table"
+import { Button } from '@/components/ui/button'
+import { useRouter } from 'next/navigation'
+import { deleteUser } from '@/server/users'
+import { Loader2, Trash2 } from 'lucide-react'
 
 export const usersColumns: ColumnDef<Users>[] = [
   {
@@ -45,5 +50,38 @@ export const usersColumns: ColumnDef<Users>[] = [
       return <div>{v ? String(v).slice(0, 10) : '-'}</div>
     },
   },
+  {
+    id: 'actions',
+    header: 'Acciones',
+    cell: ({ row }) => {
+      const router = useRouter()
+      const [loading, setLoading] = useState(false)
+      const user = row.original as Users
+
+      const handleDelete = async () => {
+        const ok = confirm(`¿Eliminar usuario ${user.username}? Esta acción es irreversible.`)
+        if (!ok) return
+        try {
+          setLoading(true)
+          await deleteUser(user.id)
+
+          router.refresh()
+        } catch (err: any) {
+          console.error('Delete user error', err)
+          alert(err?.message || 'No se pudo eliminar el usuario')
+        } finally {
+          setLoading(false)
+        }
+      }
+
+      return (
+        <div className="flex gap-2">
+          <Button size="sm" variant="ghost" onClick={handleDelete} disabled={loading}>
+            {loading ? <Loader2 className='animate-spin' /> :
+              <Trash2 />}
+          </Button>
+        </div>
+      )
+    }
+  },
 ]
-      

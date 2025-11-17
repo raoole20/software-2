@@ -98,3 +98,73 @@ export async function getAllUsers() {
     message: "An unexpected error occurred while fetching users",
   };
 }
+
+export async function deleteUser(id: number) {
+  const session = await getSession();
+  try {
+    await request.delete(`/api/users/usuarios/${id}/`, {
+      headers: {
+        Authorization: `Token ${session?.accessToken}`,
+      },
+    })
+    return {
+      message: 'User deleted successfully',
+      status: 200,
+      error: false,
+      data: null,
+    }
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    if (error instanceof AxiosError) {
+      return {
+        message: error.response?.data?.message || 'An error occurred while deleting the user',
+        status: error.response?.status || 500,
+        error: true,
+        data: error.response?.data || null,
+      }
+    }
+  }
+
+  return {
+    message: 'An unexpected error occurred while deleting the user',
+    status: 500,
+    error: true,
+    data: null,
+  }
+}
+
+
+export async function editUser(data: Partial<Users> & { id: number }) {
+  const session = await getSession();
+  try { 
+    const response = await request.put<Users>(`/api/users/usuarios/${data.id}/`, data, {
+      headers: {
+        Authorization: `Token ${session?.accessToken}`,
+      },
+    });
+    return {
+      data: response.data,
+      status: response.status,
+      code: response.statusText,
+      internalCode: null,
+      error: false,
+    };
+  } catch (error) {
+    console.error('Error editing user:', error);
+    if (error instanceof AxiosError) {
+      return {
+        message: error.response?.data?.message || 'An error occurred while editing the user',
+        status: error.response?.status || 500,
+        error: true,
+        data: error.response?.data || null,
+      }
+    }
+
+    return {
+      message: 'An unexpected error occurred while editing the user',
+      status: 500,
+      error: true,
+      data: null,
+    }
+  }
+}

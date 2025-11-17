@@ -1,7 +1,7 @@
 'use client'
 import React from 'react'
-import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
-import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart'
+import { AreaChart, Area, CartesianGrid, XAxis, YAxis } from "recharts"
 
 export interface HoursPerMonthPoint {
   month: string
@@ -11,41 +11,51 @@ export interface HoursPerMonthPoint {
 interface HoursPerMonthChartProps {
   data: HoursPerMonthPoint[]
   config: Record<string, { label: string; color: string }>
+  heightClassName?: string
 }
-export const description = "A bar chart"
-const chartData = [
-  { month: "January", desktop: 186 },
-  { month: "February", desktop: 305 },
-  { month: "March", desktop: 237 },
-  { month: "April", desktop: 73 },
-  { month: "May", desktop: 209 },
-  { month: "June", desktop: 214 },
-]
-const chartConfig = {
-  desktop: {
-    label: "Desktop",
-    color: "var(--chart-1)",
-  },
-} satisfies ChartConfig
+export function HoursPerMonthChart({ data, config, heightClassName = "h-56" }: HoursPerMonthChartProps) {
+  const hasData = data && data.length > 0
 
-export function HoursPerMonthChart({ data, config }: HoursPerMonthChartProps) {
+  console.log('HoursPerMonthChart data:', data);
   return (
-    <ChartContainer config={chartConfig}>
-      <BarChart accessibilityLayer data={chartData}>
-        <CartesianGrid vertical={false} />
-        <XAxis
-          dataKey="month"
-          tickLine={false}
-          tickMargin={10}
-          axisLine={false}
-          tickFormatter={(value) => value.slice(0, 3)}
-        />
-        <ChartTooltip
-          cursor={false}
-          content={<ChartTooltipContent hideLabel />}
-        />
-        <Bar dataKey="desktop" fill="var(--color-desktop)" radius={8} />
-      </BarChart>
+    <ChartContainer id="hours-per-month" config={config} className={heightClassName}>
+      {hasData ? (
+        <AreaChart
+          data={data}
+          margin={{ top: 12, right: 20, left: 0, bottom: 0 }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis
+            dataKey="month"
+            tickLine={false}
+            axisLine={false}
+            tickMargin={8}
+          />
+          <YAxis
+            width={40}
+            tickLine={false}
+            axisLine={false}
+            tickMargin={4}
+          />
+          <ChartTooltip
+            cursor={false}
+            content={<ChartTooltipContent hideLabel />}>
+          </ChartTooltip>
+          <Area
+            type="monotone"
+            dataKey="hours"
+            stroke={config.hours?.color || "var(--color-chart-3)"}
+            fill={config.hours?.color || "var(--color-chart-3)"}
+            fillOpacity={0.18}
+            strokeWidth={2}
+            activeDot={{ r: 5 }}
+          />
+        </AreaChart>
+      ) : (
+        <div className="flex h-full items-center justify-center text-xs text-muted-foreground">
+          Sin datos de horas pendientes
+        </div>
+      )}
     </ChartContainer>
   )
 }
