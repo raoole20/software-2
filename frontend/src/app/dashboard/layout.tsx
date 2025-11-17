@@ -1,4 +1,5 @@
 import React from "react"
+import { redirect } from "next/navigation"
 
 import AdminSidebar from "@/components/admin/sidebar/admin-sidebar"
 import { Separator } from "@/components/ui/separator"
@@ -17,6 +18,12 @@ export default async function Layout({
   children: React.ReactNode
 }) {
   const session = await getSession()
+
+  // Check if user needs to complete initial setup
+  if (session?.user && !(session.user as any).configuracion_inicial_completada) {
+    redirect('/auth/initial-setup')
+  }
+
   const roleLabel = session?.user?.rol
     ? session.user.rol === "administrador"
       ? "Administrador"

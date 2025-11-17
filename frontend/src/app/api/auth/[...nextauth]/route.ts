@@ -43,6 +43,9 @@ export const authOptions: AuthOptions = {
           const user = { ...(data.user as any) } as any
           if (typeof user.id === 'string' && !Number.isNaN(Number(user.id))) user.id = Number(user.id)
 
+          // Store initial setup requirement flag
+          user.requiereConfiguracionInicial = data.requiere_configuracion_inicial
+
           return { ...user, accessToken: data.token };
         } catch (error) {
           console.error("Error during authorization:", error);

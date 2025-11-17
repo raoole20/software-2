@@ -5,6 +5,7 @@ import type { NextRequest } from "next/server";
 const PUBLIC_FILE = [
   "/auth",
   "/auth/login",
+  "/auth/initial-setup",
   "/api/auth",
   "/api",
   "/api/schema",

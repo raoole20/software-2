@@ -34,5 +34,7 @@ export interface Users {
     meta_horas_voluntariado_externo: string;
     meta_horas_chat_ingles:          string;
     meta_horas_talleres:             string;
+    pregunta_seguridad?:             string;
+    configuracion_inicial_completada: boolean;
     actividades_asignadas?:          string;
 }

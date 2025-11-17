@@ -33,9 +33,11 @@ class UsuarioSerializer(serializers.ModelSerializer):
                  'sexo', 'fecha_nacimiento', 'carrera', 'universidad', 'semestre',
                  'meta_horas_voluntariado_interno', 'meta_horas_voluntariado_externo',
                  'meta_horas_chat_ingles', 'meta_horas_talleres',
+                 'pregunta_seguridad', 'configuracion_inicial_completada',
                  'actividades_asignadas']  # NUEVO campo
         extra_kwargs = {
             'password': {'write_only': True},
+            'respuesta_seguridad': {'write_only': True},  # Never expose security answers
             'username': {'error_messages': {'unique': 'Ya existe un usuario con este nombre de usuario.'}},
             'email': {'error_messages': {'unique': 'Ya existe un usuario con este correo electrónico.'}}
         }
@@ -135,5 +137,35 @@ class UsuarioCreateSerializer(serializers.ModelSerializer):
         password = validated_data.pop('password')
         user = Usuario(**validated_data)
         user.set_password(password)
+        user.save()
+        return user
+
+
+class ConfiguracionInicialSerializer(serializers.Serializer):
+    """Serializer for initial user setup (password change and security question)"""
+    nueva_password = serializers.CharField(write_only=True, min_length=8)
+    confirmar_password = serializers.CharField(write_only=True)
+    pregunta_seguridad = serializers.CharField(max_length=255)
+    respuesta_seguridad = serializers.CharField(max_length=255, write_only=True)
+
+    def validate(self, data):
+        nueva_password = data.get('nueva_password')
+        confirmar_password = data.get('confirmar_password')
+
+        if nueva_password != confirmar_password:
+            raise serializers.ValidationError({
+                'confirmar_password': 'Las contraseñas no coinciden.'
+            })
+
+        return data
+
+    def save(self, user):
+        """Update user with initial setup data"""
+        from django.contrib.auth.hashers import make_password
+
+        user.set_password(self.validated_data['nueva_password'])
+        user.pregunta_seguridad = self.validated_data['pregunta_seguridad']
+        user.respuesta_seguridad = make_password(self.validated_data['respuesta_seguridad'])  # Hash the answer
+        user.configuracion_inicial_completada = True
         user.save()
         return user

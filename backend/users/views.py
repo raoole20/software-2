@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from django.db import models, IntegrityError
 from .models import Usuario
-from .serializers import UsuarioSerializer, LoginSerializer, UsuarioCreateSerializer
+from .serializers import UsuarioSerializer, LoginSerializer, UsuarioCreateSerializer, ConfiguracionInicialSerializer
 from .permissions import IsAdministrador, IsOwnerOrAdmin
 from drf_spectacular.utils import extend_schema
 
@@ -22,12 +22,15 @@ class AuthViewSet(viewsets.ViewSet):
         if serializer.is_valid():
             user = serializer.validated_data['user']
             token, created = Token.objects.get_or_create(user=user)
-            
-            return Response({
+
+            response_data = {
                 'token': token.key,
                 'user': UsuarioSerializer(user).data,
-                'message': 'Inicio de sesión exitoso'
-            })
+                'message': 'Inicio de sesión exitoso',
+                'requiere_configuracion_inicial': not user.configuracion_inicial_completada
+            }
+
+            return Response(response_data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     @extend_schema(
@@ -219,3 +222,28 @@ class UsuarioViewSet(viewsets.ModelViewSet):
             'becario': f"{usuario.first_name} {usuario.last_name}",
             'actividades_asignadas': [actividad.titulo for actividad in actividades]
         })
+
+    @extend_schema(
+        description="""Configuración inicial del usuario (primer inicio de sesión)
+        Permite a un usuario configurar su contraseña y pregunta de seguridad por primera vez."""
+    )
+    @action(detail=False, methods=['post'], permission_classes=[permissions.IsAuthenticated])
+    def configuracion_inicial(self, request):
+        user = request.user
+
+        # Check if initial setup is already completed
+        if user.configuracion_inicial_completada:
+            return Response(
+                {'error': 'La configuración inicial ya ha sido completada'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        serializer = ConfiguracionInicialSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user)
+            return Response({
+                'message': 'Configuración inicial completada exitosamente',
+                'user': UsuarioSerializer(user).data
+            })
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

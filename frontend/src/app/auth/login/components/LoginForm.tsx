@@ -48,6 +48,14 @@ export default function LoginForm() {
             return
         }
 
+        // Check if initial setup is required
+        const session = await fetch('/api/auth/session').then(res => res.json())
+        if (session?.user?.requiereConfiguracionInicial) {
+            toast.success("Bienvenido! Complete su configuración inicial.");
+            router.push("/auth/initial-setup");
+            return;
+        }
+
         toast.success("Logged in successfully!");
         router.push("/dashboard/");
     }

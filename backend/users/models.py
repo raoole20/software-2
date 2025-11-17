@@ -23,5 +23,10 @@ class Usuario(AbstractUser):
     meta_horas_chat_ingles = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     meta_horas_talleres = models.DecimalField(max_digits=5, decimal_places=2, default=0)
 
+    # Security and initial setup fields
+    pregunta_seguridad = models.CharField(max_length=255, blank=True, null=True)
+    respuesta_seguridad = models.CharField(max_length=255, blank=True, null=True)  # Will be hashed
+    configuracion_inicial_completada = models.BooleanField(default=False)
+
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.rol})"
