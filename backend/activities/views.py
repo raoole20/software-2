@@ -21,18 +21,20 @@ class ActividadViewSet(viewsets.ModelViewSet):
         if user.rol == 'administrador':
             return Actividad.objects.all().prefetch_related('becarios_asignados')
         else:
+            # Becarios solo ven actividades que están en catálogo Y que están asignadas a ellos
+            # O actividades que ellos mismos crearon
             return Actividad.objects.filter(
-                Q(en_catalogo=True) | Q(creador=user) | Q(becarios_asignados=user)
+                Q(en_catalogo=True, becarios_asignados=user) | Q(creador=user)
             ).prefetch_related('becarios_asignados').distinct()
     
     @extend_schema(
         description="""**🔐 BECARIOS Y ADMINISTRADORES** - Listar actividades
-        
+
         Retorna las actividades disponibles en el sistema.
-        
+
         **Permisos:**
         - **Administradores:** Pueden ver todas las actividades
-        - **Becarios:** Solo pueden ver actividades del catálogo, las que han creado y las asignadas a ellos
+        - **Becarios:** Solo pueden ver actividades que están en catálogo y asignadas específicamente a ellos, o actividades que ellos mismos crearon
         """
     )
     def list(self, request, *args, **kwargs):
@@ -40,12 +42,12 @@ class ActividadViewSet(viewsets.ModelViewSet):
 
     @extend_schema(
         description="""**🔐 BECARIOS Y ADMINISTRADORES** - Obtener actividad específica
-        
+
         Retorna los detalles de una actividad específica.
-        
+
         **Permisos:**
         - **Administradores:** Pueden ver cualquier actividad
-        - **Becarios:** Solo pueden ver actividades del catálogo, las que han creado y las asignadas a ellos
+        - **Becarios:** Solo pueden ver actividades que están en catálogo y asignadas específicamente a ellos, o actividades que ellos mismos crearon
         """
     )
     def retrieve(self, request, *args, **kwargs):
@@ -53,12 +55,12 @@ class ActividadViewSet(viewsets.ModelViewSet):
 
     @extend_schema(
         description="""**🔐 BECARIOS Y ADMINISTRADORES** - Crear actividad
-        
+
         Permite crear una nueva actividad en el sistema.
-        
+
         **Permisos:**
-        - **Administradores:** Las actividades se crean automáticamente en el catálogo
-        - **Becarios:** Las actividades se crean como pendientes de aprobación
+        - **Administradores:** Pueden elegir si la actividad va al catálogo (visible para becarios asignados)
+        - **Becarios:** Las actividades se crean como privadas (no en catálogo)
         """
     )
     def create(self, request, *args, **kwargs):
@@ -105,10 +107,7 @@ class ActividadViewSet(viewsets.ModelViewSet):
     
     def perform_create(self, serializer):
         user = self.request.user
-        if user.rol == 'administrador':
-            serializer.save(creador=user, en_catalogo=True)
-        else:
-            serializer.save(creador=user, en_catalogo=False)
+        serializer.save(creador=user)
 
     @extend_schema(
         description="""**👑 SOLO ADMINISTRADORES** - Asignar becarios a actividad
