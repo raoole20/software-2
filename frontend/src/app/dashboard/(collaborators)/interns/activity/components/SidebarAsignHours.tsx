@@ -25,9 +25,11 @@ interface Props {
   token?: string
   /** optional server action passed from a parent server component. If provided it will be used to create the registro. */
   onCreate?: (data: { actividad?: number; descripcion_manual?: string; horas_reportadas: string | number }) => Promise<any>
+  /** máximo permitido de horas para la actividad */
+  maxHours?: number
 }
 
-export default function SidebarAsignHours({ id, token, onCreate }: Props) {
+export default function SidebarAsignHours({ id, token, onCreate, maxHours }: Props) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [serverError, setServerError] = useState<string | null>(null)
@@ -93,8 +95,10 @@ export default function SidebarAsignHours({ id, token, onCreate }: Props) {
               rules={{
                 required: 'Las horas son requeridas',
                 validate: v => {
-                  const n = Number(v);
-                  return (!isNaN(n) && n >= 0) || 'Ingresa un número válido (≥ 0)';
+                  const n = Number(v)
+                  if (isNaN(n) || n < 0) return 'Ingresa un número válido (≥ 0)'
+                  if (typeof maxHours === 'number' && n > maxHours) return `No puede exceder ${maxHours} hora(s)`
+                  return true
                 }
               }}
               render={({ field }) => (
@@ -104,11 +108,15 @@ export default function SidebarAsignHours({ id, token, onCreate }: Props) {
                     <Input
                       type="number"
                       step="0.25"
+                      max={typeof maxHours === 'number' ? maxHours : undefined}
                       placeholder="Ej. 2.5"
                       {...field}
                       className="h-10"
                     />
                   </FormControl>
+                  {typeof maxHours === 'number' && (
+                    <p className="text-xs text-muted-foreground">Máximo permitido: {maxHours} hora(s)</p>
+                  )}
                   <FormMessage />
                 </FormItem>
               )}

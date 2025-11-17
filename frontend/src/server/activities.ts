@@ -78,6 +78,46 @@ export async function getAllActivities() {
     }
 }
 
+// Obtener una actividad por ID
+export async function getActivityById(id: number) {
+    const session = await getSession();
+    try {
+        const response = await request.get<Activity>(`/api/activities/actividades/${id}/`, {
+            headers: {
+                'Authorization': `Token ${session?.accessToken}`
+            }
+        });
+        return {
+            message: 'Activity fetched successfully',
+            status: 200,
+            controller: true,
+            data: response.data,
+            originalError: null,
+            error: false,
+        }
+    } catch (error) {
+        if (error instanceof AxiosError) {
+            return {
+                message: error.cause || 'Error fetching activity',
+                status: error.response?.status || 500,
+                controller: true,
+                data: error.response?.data || { detail: error.message },
+                originalError: error,
+                error: true,
+            }
+        }
+
+        return {
+            message: 'Unexpected error fetching activity',
+            status: 500,
+            controller: false,
+            originalError: error,
+            data: null,
+            error: true,
+        }
+    }
+}
+
 export async function createRegistroHoras(data: any) {
     const session = await getSession();
     try {
