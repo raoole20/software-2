@@ -77,7 +77,8 @@ export async function getAllActivities() {
         }
     }
 }
-export async function createRegistroHoras(data: RegistroHorasDTO) {
+
+export async function createRegistroHoras(data: any) {
     const session = await getSession();
     try {
         const response = await request.post('/api/records/registros-horas/', data, {

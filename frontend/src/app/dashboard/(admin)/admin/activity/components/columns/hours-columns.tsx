@@ -66,7 +66,9 @@ export const hoursColumns: ColumnDef<Hours>[] = [
     id: 'actions',
     header: 'Acciones',
     cell: ({ row }) => {
-      const actividadId = (row.original as Hours).actividad
+      console.log('Row data:', row.original);
+
+      const actividadId = (row.original as Hours).id;
       return (
         <div className="flex gap-2">
           <Link href={`/dashboard/admin/activity/hours/${actividadId}`}>

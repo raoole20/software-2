@@ -9,6 +9,8 @@ export const dynamic = 'force-dynamic'
 export default async function Page() {
   const allHours = await getAllHorasRegistros();
 
+  console.log(JSON.stringify({ allHours }))
+
   if (allHours.error) {
     return (
       <Card className='max-w-2xl'>
