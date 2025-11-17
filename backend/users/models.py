@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, UserManager
 
 class Usuario(AbstractUser):
     ROL_CHOICES = [
@@ -29,5 +29,10 @@ class Usuario(AbstractUser):
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.rol})"
     
-    objects = models.Manager()  # Manager por defecto
-    active_objects = models.Manager()  # Manager para solo activos
+    # Use Django's UserManager so authentication helpers (authenticate/get_by_natural_key)
+    # work correctly. Replacing with a plain models.Manager removes methods required
+    # by the auth backend and causes the ``get_by_natural_key`` AttributeError.
+    objects = UserManager()
+    # active_objects can remain a simple manager or extend UserManager if you need
+    # authentication-related helpers on that manager as well.
+    active_objects = models.Manager()
