@@ -15,7 +15,7 @@ export default async function SidebarAsignHoursServer({ id }: Props) {
 
   let maxHours: number | undefined
   if (id) {
-    const res = await getActivityById(Number(id))
+    const res: any = await getActivityById(Number(id))
     if (!res.error && res.data) {
       const parsed = Number(res.data.duracion_horas as any)
       maxHours = Number.isFinite(parsed) ? parsed : undefined
