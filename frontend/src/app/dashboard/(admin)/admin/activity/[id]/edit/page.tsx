@@ -22,7 +22,7 @@ export default async function AdminActivityEditPage({ params }: PageProps) {
       getActivityById(activityId),
       getAllUsers()
     ])
-    return <AdminActivityEditForm activity={activity} allUsers={allUsers} />
+    return <AdminActivityEditForm activity={activity as any} allUsers={allUsers} />
   } catch (error) {
     console.error('Error fetching data:', error)
     return <div>Error al cargar los datos</div>
