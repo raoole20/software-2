@@ -142,6 +142,40 @@ export async function updateActivity(id: number, data: Partial<ActivityDTO>) {
     }
 }
 
+export async function deleteActivity(id: number) {
+    const session = await getSession();
+    try {
+        await request.delete(`/api/activities/actividades/${id}/`, {
+            headers: {
+                'Authorization': `Token ${session?.accessToken}`
+            }
+        });
+
+        return {
+            message: 'Activity deleted successfully',
+            status: 200,
+            error: false,
+        }
+    } catch (error) {
+        if (error instanceof AxiosError) {
+            console.error('Error deleting activity:', error.response?.data || error.message);
+            return {
+                message: error.response?.data?.error || error.response?.data?.detail || 'Error deleting activity',
+                status: error.response?.status || 500,
+                error: true,
+                data: error.response?.data || null,
+            }
+        }
+
+        return {
+            message: 'Unexpected error deleting activity',
+            status: 500,
+            error: true,
+            data: null,
+        }
+    }
+}
+
 export async function createRegistroHoras(data: any) {
     const session = await getSession();
     try {

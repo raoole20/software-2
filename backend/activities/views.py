@@ -94,15 +94,31 @@ class ActividadViewSet(viewsets.ModelViewSet):
 
     @extend_schema(
         description="""**🔐 BECARIOS Y ADMINISTRADORES** - Eliminar actividad
-        
+
         Permite eliminar una actividad del sistema.
-        
+
+        **Restricciones:**
+        - No se puede eliminar una actividad si ya tiene registros de horas asociados
+
         **Permisos:**
-        - **Administradores:** Pueden eliminar cualquier actividad
-        - **Becarios:** Solo pueden eliminar las actividades que han creado
+        - **Administradores:** Pueden eliminar cualquier actividad (siempre que no tenga horas registradas)
+        - **Becarios:** Solo pueden eliminar las actividades que han creado (siempre que no tenga horas registradas)
         """
     )
     def destroy(self, request, *args, **kwargs):
+        actividad = self.get_object()
+
+        # Verificar si la actividad tiene registros de horas
+        from records.models import RegistroHoras
+        if RegistroHoras.objects.filter(actividad=actividad).exists():
+            return Response(
+                {
+                    'error': 'No se puede eliminar la actividad porque ya tiene registros de horas asociados.',
+                    'detail': 'Para eliminar esta actividad, primero debe eliminar o reasignar todos los registros de horas relacionados.'
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         return super().destroy(request, *args, **kwargs)
     
     def perform_create(self, serializer):

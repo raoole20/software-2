@@ -3,8 +3,10 @@ import { ColumnDef } from '@tanstack/react-table'
 import { ActivityDTO } from '@/types/activiy'
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
-import { Eye } from 'lucide-react'
+import { Eye, Trash2 } from 'lucide-react'
 import { useSession } from 'next-auth/react'
+import { deleteActivity } from '@/server/activities'
+import { toast } from 'sonner'
 
 export const activitiesColumns: ColumnDef<ActivityDTO>[] = [
     {
@@ -78,18 +80,43 @@ export const activitiesColumns: ColumnDef<ActivityDTO>[] = [
             const router = useRouter()
             const { data: session } = useSession()
             const id = row.getValue('id') as number
+            const titulo = row.getValue('titulo') as string
             const isAdmin = session?.user?.rol === 'administrador'
 
             const handleView = () => {
                 router.push(`/dashboard/admin/activity/${id}/edit`)
             }
 
+            const handleDelete = async () => {
+                const confirmed = confirm(`¿Estás seguro de que quieres eliminar la actividad "${titulo}"?\n\nEsta acción no se puede deshacer.`)
+                if (!confirmed) return
+
+                try {
+                    const result = await deleteActivity(id)
+                    if (result.error) {
+                        toast.error(result.message || 'Error al eliminar la actividad')
+                    } else {
+                        toast.success('Actividad eliminada correctamente')
+                        // Refresh the page to update the table
+                        window.location.reload()
+                    }
+                } catch (error: any) {
+                    console.error('Error deleting activity:', error)
+                    toast.error(error?.message || 'Error al eliminar la actividad')
+                }
+            }
+
             return (
                 <div className="flex gap-2">
                     {isAdmin && (
-                        <Button size="sm" variant="ghost" onClick={handleView}>
-                            <Eye />
-                        </Button>
+                        <>
+                            <Button size="sm" variant="ghost" onClick={handleView} title="Editar actividad">
+                                <Eye />
+                            </Button>
+                            <Button size="sm" variant="ghost" onClick={handleDelete} title="Eliminar actividad">
+                                <Trash2 />
+                            </Button>
+                        </>
                     )}
                 </div>
             )
