@@ -202,42 +202,6 @@ export default function ProfilePage() {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Metas de Horas</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2">
-            <div>
-              <label className="text-sm font-medium">Voluntariado Interno</label>
-              <p className="text-sm text-muted-foreground">{profile.meta_horas_voluntariado_interno} horas</p>
-            </div>
-            <div>
-              <label className="text-sm font-medium">Voluntariado Externo</label>
-              <p className="text-sm text-muted-foreground">{profile.meta_horas_voluntariado_externo} horas</p>
-            </div>
-            <div>
-              <label className="text-sm font-medium">Chat Inglés</label>
-              <p className="text-sm text-muted-foreground">{profile.meta_horas_chat_ingles} horas</p>
-            </div>
-            <div>
-              <label className="text-sm font-medium">Talleres</label>
-              <p className="text-sm text-muted-foreground">{profile.meta_horas_talleres} horas</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {profile.actividades_asignadas && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Actividades Asignadas</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">{profile.actividades_asignadas}</p>
-          </CardContent>
-        </Card>
-      )}
     </div>
   )
 }

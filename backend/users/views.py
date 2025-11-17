@@ -1,8 +1,8 @@
 from rest_framework import viewsets, status, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.authtoken.models import Token 
-from django.db import models
+from rest_framework.authtoken.models import Token
+from django.db import models, IntegrityError
 from .models import Usuario
 from .serializers import UsuarioSerializer, LoginSerializer, UsuarioCreateSerializer
 from .permissions import IsAdministrador, IsOwnerOrAdmin
@@ -116,23 +116,57 @@ class UsuarioViewSet(viewsets.ModelViewSet):
 
     @extend_schema(
         description="""**👑 SOLO ADMINISTRADORES** - Actualizar usuario completo
-        
+
         Actualiza todos los campos de un usuario existente.
-        
+
         """
     )
     def update(self, request, *args, **kwargs):
-        return super().update(request, *args, **kwargs)
+        try:
+            return super().update(request, *args, **kwargs)
+        except IntegrityError as e:
+            if 'username' in str(e).lower():
+                return Response(
+                    {'username': ['Ya existe un usuario con este nombre de usuario.']},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            elif 'email' in str(e).lower():
+                return Response(
+                    {'email': ['Ya existe un usuario con este correo electrónico.']},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            else:
+                return Response(
+                    {'error': 'Error de integridad en la base de datos'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
 
     @extend_schema(
         description="""**👑 SOLO ADMINISTRADORES** - Actualización parcial de usuario
-        
+
         Actualiza solo los campos especificados de un usuario existente.
-        
+
         """
     )
     def partial_update(self, request, *args, **kwargs):
-        return super().partial_update(request, *args, **kwargs)
+        try:
+            return super().partial_update(request, *args, **kwargs)
+        except IntegrityError as e:
+            if 'username' in str(e).lower():
+                return Response(
+                    {'username': ['Ya existe un usuario con este nombre de usuario.']},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            elif 'email' in str(e).lower():
+                return Response(
+                    {'email': ['Ya existe un usuario con este correo electrónico.']},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            else:
+                return Response(
+                    {'error': 'Error de integridad en la base de datos'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
 
     @extend_schema(
         description="**👑 SOLO ADMINISTRADORES** - Eliminar usuario"

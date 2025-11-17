@@ -65,6 +65,10 @@ const adminNavigation: DashboardSection[] = [
         title: "Resumen",
         href: "/dashboard/admin/overview",
       },
+      {
+        title: "Mi perfil",
+        href: "/dashboard/admin/profile",
+      },
     ],
   },
   {

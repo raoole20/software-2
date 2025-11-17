@@ -29,18 +29,65 @@ class UsuarioSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Usuario
-        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'rol', 
+        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'rol',
                  'sexo', 'fecha_nacimiento', 'carrera', 'universidad', 'semestre',
                  'meta_horas_voluntariado_interno', 'meta_horas_voluntariado_externo',
                  'meta_horas_chat_ingles', 'meta_horas_talleres',
                  'actividades_asignadas']  # NUEVO campo
-        extra_kwargs = {'password': {'write_only': True}}
+        extra_kwargs = {
+            'password': {'write_only': True},
+            'username': {'error_messages': {'unique': 'Ya existe un usuario con este nombre de usuario.'}},
+            'email': {'error_messages': {'unique': 'Ya existe un usuario con este correo electrónico.'}}
+        }
+
+    def validate_username(self, value):
+        # Check if username exists, excluding current instance if updating
+        queryset = Usuario.objects.filter(username=value)
+        if self.instance:
+            queryset = queryset.exclude(pk=self.instance.pk)
+        if queryset.exists():
+            raise serializers.ValidationError("Ya existe un usuario con este nombre de usuario.")
+        return value
+
+    def validate_email(self, value):
+        # Check if email exists, excluding current instance if updating
+        queryset = Usuario.objects.filter(email=value)
+        if self.instance:
+            queryset = queryset.exclude(pk=self.instance.pk)
+        if queryset.exists():
+            raise serializers.ValidationError("Ya existe un usuario con este correo electrónico.")
+        return value
+
+    def validate(self, data):
+        # Additional validation to ensure uniqueness checks are enforced
+        username = data.get('username')
+        email = data.get('email')
+
+        if username:
+            queryset = Usuario.objects.filter(username=username)
+            if self.instance:
+                queryset = queryset.exclude(pk=self.instance.pk)
+            if queryset.exists():
+                raise serializers.ValidationError({
+                    'username': 'Ya existe un usuario con este nombre de usuario.'
+                })
+
+        if email:
+            queryset = Usuario.objects.filter(email=email)
+            if self.instance:
+                queryset = queryset.exclude(pk=self.instance.pk)
+            if queryset.exists():
+                raise serializers.ValidationError({
+                    'email': 'Ya existe un usuario con este correo electrónico.'
+                })
+
+        return data
 
     def get_actividades_asignadas(self, obj):
         """Obtener información básica de las actividades asignadas al becario"""
         if obj.rol != 'becario':
             return []
-        
+
         from activities.serializers import ActividadBasicaSerializer
         actividades = obj.actividades_asignadas.all()
         return ActividadBasicaSerializer(actividades, many=True).data
@@ -52,6 +99,10 @@ class UsuarioCreateSerializer(serializers.ModelSerializer):
                  'sexo', 'fecha_nacimiento', 'carrera', 'universidad', 'semestre',
                  'meta_horas_voluntariado_interno', 'meta_horas_voluntariado_externo',
                  'meta_horas_chat_ingles', 'meta_horas_talleres']
+        extra_kwargs = {
+            'username': {'error_messages': {'unique': 'Ya existe un usuario con este nombre de usuario.'}},
+            'email': {'error_messages': {'unique': 'Ya existe un usuario con este correo electrónico.'}}
+        }
 
     def validate_username(self, value):
         if Usuario.objects.filter(username=value).exists():
@@ -62,6 +113,23 @@ class UsuarioCreateSerializer(serializers.ModelSerializer):
         if Usuario.objects.filter(email=value).exists():
             raise serializers.ValidationError("Ya existe un usuario con este correo electrónico.")
         return value
+
+    def validate(self, data):
+        # Additional validation to ensure uniqueness checks are enforced
+        username = data.get('username')
+        email = data.get('email')
+
+        if username and Usuario.objects.filter(username=username).exists():
+            raise serializers.ValidationError({
+                'username': 'Ya existe un usuario con este nombre de usuario.'
+            })
+
+        if email and Usuario.objects.filter(email=email).exists():
+            raise serializers.ValidationError({
+                'email': 'Ya existe un usuario con este correo electrónico.'
+            })
+
+        return data
 
     def create(self, validated_data):
         password = validated_data.pop('password')
