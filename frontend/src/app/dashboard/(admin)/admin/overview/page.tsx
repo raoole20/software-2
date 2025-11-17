@@ -20,13 +20,7 @@ export default async function Page() {
   const users = await getAllUsers();
   const pendingHours = await getAllPendingHours();
   const allActivity  = await getAllActivities();
-
-// [
-//   { name: 'Mujer', value: 50, key: 'Mujer' },
-//   { name: 'Hombre', value: 80, key: 'Hombre' },
-//   { name: 'Desconocido', value: 10, key: 'Desconocido' },
-// ]
-
+  
   const sexo = users.reduce((acc, user) => {
     const s = user?.sexo === 'M' ? 'Hombre' : user?.sexo === 'F' ? 'Mujer' : 'Desconocido'
     const idx = acc.findIndex((x) => x.key === s)
