@@ -105,7 +105,7 @@ const adminNavigation: DashboardSection[] = [
     items: [
       {
         title: "Desarrollado Por",
-        href: "/dashboard/admin/office-hours",
+        href: "/dashboard/admin/infor-developers",
       },
       {
         title: "Contacto",
