@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Image from 'next/image';
 import { motion } from 'motion/react';
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default function Layout({ children, modal }: { children: React.ReactNode, modal?: React.ReactNode }) {
     return (
         <div className='w-full max-w-[90%] md:max-w-sm space-y-5'>
             <motion.img
@@ -32,6 +32,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     </TabsContent>
                 </Tabs>
             </motion.div>
+
+            {modal}
         </div>
     )
 }

@@ -90,17 +90,13 @@ export default function LoginForm() {
                         </Button>
 
                         <div className="flex items-center gap-3">
-                            <Link href="#" className="text-sm text-primary underline-offset-2 hover:underline">
+                            <Link href="/auth/login/reset-password" className="text-sm text-primary underline-offset-2 hover:underline">
                                 Olvidé mi contraseña
                             </Link>
                         </div>
                     </div>
 
-                    <div className="text-center">
-                        <Link href="#" className="text-sm text-muted-foreground">
-                            ¿No tienes cuenta? <span className="text-primary">Regístrate</span>
-                        </Link>
-                    </div>
+                 
                 </div>
             </form>
         </Form>
