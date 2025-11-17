@@ -3,8 +3,14 @@ import { ColumnDef } from '@tanstack/react-table'
 import { ActivityDTO } from '@/types/activiy'
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
+import { Eye } from 'lucide-react'
 
 export const activitiesColumns: ColumnDef<ActivityDTO>[] = [
+    {
+        accessorKey: 'id',
+        header: 'ID',
+        cell: ({ row }) => <div className="text-sm text-muted-foreground">{row?.getValue('id')}</div>,
+    },
     {
         id: 'select',
         header: ({ table }) => (
@@ -63,6 +69,26 @@ export const activitiesColumns: ColumnDef<ActivityDTO>[] = [
         accessorKey: 'facilitador',
         header: 'Facilitador',
         cell: ({ row }) => <div>{row?.getValue('facilitador') ?? '-'}</div>,
+    },
+    {
+        id: 'actions',
+        header: 'Acciones',
+        cell: ({ row }) => {
+            const router = useRouter()
+            const id = row.getValue('id') as number
+
+            const handleView = () => {
+                router.push(`/dashboard/admin/activity/${id}/edit`)
+            }
+
+            return (
+                <div className="flex gap-2">
+                    <Button size="sm" variant="ghost" onClick={handleView}>
+                        <Eye />
+                    </Button>
+                </div>
+            )
+        }
     },
 ]
 

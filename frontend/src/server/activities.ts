@@ -45,7 +45,7 @@ export async function getAllActivities() {
                 'Authorization': `Token ${session?.accessToken}`
             }
         });
-    
+
         return {
             message: 'Activities fetched successfully',
             status: 200,
@@ -74,6 +74,70 @@ export async function getAllActivities() {
             originalError: error,
             data: null,
             error: true,
+        }
+    }
+}
+
+export async function getActivityById(id: number) {
+    const session = await getSession();
+    try {
+        const response = await request.get<Activity>(`/api/activities/actividades/${id}/`, {
+            headers: {
+                'Authorization': `Token ${session?.accessToken}`
+            }
+        });
+
+        return response.data;
+    } catch (error) {
+        if (error instanceof AxiosError) {
+            console.error('Error fetching activity:', error.response?.data || error.message);
+            throw {
+                message: error.cause || 'Error fetching activity',
+                status: error.response?.status || 500,
+                controller: true,
+                data: error.response?.data || { detail: error.message },
+                originalError: error,
+            }
+        }
+
+        throw {
+            message: 'Unexpected error fetching activity',
+            status: 500,
+            controller: false,
+            originalError: error,
+            data: null,
+        }
+    }
+}
+
+export async function updateActivity(id: number, data: Partial<ActivityDTO>) {
+    const session = await getSession();
+    try {
+        const response = await request.patch<Activity>(`/api/activities/actividades/${id}/`, data, {
+            headers: {
+                'Authorization': `Token ${session?.accessToken}`
+            }
+        });
+
+        return response.data;
+    } catch (error) {
+        if (error instanceof AxiosError) {
+            console.error('Error updating activity:', error.response?.data || error.message);
+            throw {
+                message: error.cause || 'Error updating activity',
+                status: error.response?.status || 500,
+                controller: true,
+                data: error.response?.data || { detail: error.message },
+                originalError: error,
+            }
+        }
+
+        throw {
+            message: 'Unexpected error updating activity',
+            status: 500,
+            controller: false,
+            originalError: error,
+            data: null,
         }
     }
 }
