@@ -8,6 +8,37 @@ import { AxiosError } from "axios";
 export async function createUser(data: CreateUserDTO) {
   const session = await getSession();
   try {
+    // First, validate minimum age on the server-call side as a precaution
+    if (data?.fecha_nacimiento) {
+      let dob: Date | null = null;
+      if (typeof data.fecha_nacimiento === "string") {
+        dob = new Date(data.fecha_nacimiento);
+      } else if (data.fecha_nacimiento instanceof Date) {
+        dob = data.fecha_nacimiento;
+      } else {
+        dob = new Date(String(data.fecha_nacimiento));
+      }
+
+      if (!isNaN(dob.getTime())) {
+        const today = new Date();
+        const cutOff = new Date(
+          today.getFullYear() - 15,
+          today.getMonth(),
+          today.getDate()
+        );
+        if (dob > cutOff) {
+          return {
+            data: null,
+            status: 400,
+            code: 400,
+            internalCode: null,
+            message: "El usuario debe tener al menos 15 años",
+            error: true,
+          };
+        }
+      }
+    }
+
     // Ensure fecha_nacimiento is formatted as YYYY-MM-DD (DRF DateField expects this)
     const payload: any = { ...data };
     if (payload.fecha_nacimiento) {
