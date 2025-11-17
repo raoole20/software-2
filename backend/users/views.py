@@ -80,7 +80,10 @@ class UsuarioViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         if self.action in ['create', 'update', 'destroy']:
             return [permissions.IsAuthenticated(), IsAdministrador()]
+        elif self.action in ['obtener_pregunta_seguridad', 'resetear_password_seguridad']:
+            return [permissions.AllowAny()]
         return [permissions.IsAuthenticated(), IsOwnerOrAdmin()]
+
     
     @extend_schema(
         description="""**👑 SOLO ADMINISTRADORES** - Listar todos los usuarios
@@ -247,3 +250,86 @@ class UsuarioViewSet(viewsets.ModelViewSet):
             })
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @extend_schema(
+        description="""Obtener pregunta de seguridad para recuperación de contraseña"""
+    )
+    @action(detail=False, methods=['post'], permission_classes=[permissions.AllowAny], authentication_classes=[])
+    def obtener_pregunta_seguridad(self, request):
+        email = request.data.get('email')
+        if not email:
+            return Response(
+                {'error': 'El correo electrónico es requerido'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            usuario = Usuario.objects.get(email=email)
+            if not usuario.pregunta_seguridad:
+                return Response(
+                    {'error': 'Este usuario no ha completado la configuración inicial. Contacta a un administrador para recuperar tu contraseña.'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            return Response({
+                'pregunta_seguridad': usuario.pregunta_seguridad,
+                'user_id': usuario.id
+            })
+        except Usuario.DoesNotExist:
+            return Response(
+                {'error': 'No se encontró un usuario con este correo electrónico'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+    @extend_schema(
+        description="""Verificar respuesta de seguridad y cambiar contraseña"""
+    )
+    @action(detail=False, methods=['post'], permission_classes=[permissions.AllowAny], authentication_classes=[])
+    def resetear_password_seguridad(self, request):
+        user_id = request.data.get('user_id')
+        respuesta_seguridad = request.data.get('respuesta_seguridad')
+        nueva_password = request.data.get('nueva_password')
+
+        if not all([user_id, respuesta_seguridad, nueva_password]):
+            return Response(
+                {'error': 'Todos los campos son requeridos'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            usuario = Usuario.objects.get(id=user_id)
+        except Usuario.DoesNotExist:
+            return Response(
+                {'error': 'Usuario no encontrado'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        # Verify security answer
+        from django.contrib.auth.hashers import check_password
+        if not check_password(respuesta_seguridad, usuario.respuesta_seguridad):
+            return Response(
+                {'error': 'La respuesta de seguridad es incorrecta'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Handle verification vs actual password change
+        if nueva_password == 'temp':
+            # This is just verification, don't change password
+            return Response({
+                'message': 'Respuesta de seguridad verificada correctamente'
+            })
+        else:
+            # This is actual password change
+            if len(nueva_password) < 8:
+                return Response(
+                    {'error': 'La contraseña debe tener al menos 8 caracteres'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            # Update password
+            usuario.set_password(nueva_password)
+            usuario.save()
+
+            return Response({
+                'message': 'Contraseña actualizada exitosamente'
+            })
