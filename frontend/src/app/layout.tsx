@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { ThemeProvider } from "@/contexts";
+import Providers from '@/components/Providers'
 
 import "./globals.css";
-import { Toaster } from "@/components/ui/sonner";
 
 
 export const metadata: Metadata = {
@@ -25,10 +25,9 @@ export default async function RootLayout({
       <body
         className={`antialiased`}
       >
-        <ThemeProvider attribute={'class'} defaultTheme={'system'} enableSystem>
-          <Toaster />
+        <Providers>
           {children}
-        </ThemeProvider>
+        </Providers>
       </body>
     </html>
   );

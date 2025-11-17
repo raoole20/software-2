@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
 import { deleteUser } from '@/server/users'
 import { Loader2, Trash2 } from 'lucide-react'
+import { getSession, useSession } from 'next-auth/react'
 
 export const usersColumns: ColumnDef<Users>[] = [
   {
@@ -53,9 +54,10 @@ export const usersColumns: ColumnDef<Users>[] = [
   {
     id: 'actions',
     header: 'Acciones',
-    cell: ({ row }) => {
+    cell:  ({ row }) => {
       const router = useRouter()
       const [loading, setLoading] = useState(false)
+      const {  data } = useSession()
       const user = row.original as Users
 
       const handleDelete = async () => {
@@ -76,7 +78,7 @@ export const usersColumns: ColumnDef<Users>[] = [
 
       return (
         <div className="flex gap-2">
-          <Button size="sm" variant="ghost" onClick={handleDelete} disabled={loading}>
+          <Button  size="sm" variant="ghost" onClick={handleDelete} disabled={loading || data?.user?.id === user.id}>
             {loading ? <Loader2 className='animate-spin' /> :
               <Trash2 />}
           </Button>
