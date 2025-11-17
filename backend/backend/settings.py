@@ -156,6 +156,21 @@ CORS_ALLOWED_ORIGINS = [
 
 CORS_ALLOW_CREDENTIALS = True
 
+# During development, allow all origins when DEBUG is True to avoid CORS issues from local frontends.
+# In production, set this to False and explicitly configure `CORS_ALLOWED_ORIGINS`.
+if DEBUG:
+    CORS_ALLOW_ALL_ORIGINS = True
+
+try:
+    # ensure Authorization header is allowed
+    from corsheaders.defaults import default_headers
+    CORS_ALLOW_HEADERS = list(default_headers) + [
+        'authorization',
+    ]
+except Exception:
+    # if corsheaders not available or import fails, silently continue
+    pass
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
