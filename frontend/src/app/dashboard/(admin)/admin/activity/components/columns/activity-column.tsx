@@ -4,6 +4,7 @@ import { ActivityDTO } from '@/types/activiy'
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
 import { Eye } from 'lucide-react'
+import { useSession } from 'next-auth/react'
 
 export const activitiesColumns: ColumnDef<ActivityDTO>[] = [
     {
@@ -75,7 +76,9 @@ export const activitiesColumns: ColumnDef<ActivityDTO>[] = [
         header: 'Acciones',
         cell: ({ row }) => {
             const router = useRouter()
+            const { data: session } = useSession()
             const id = row.getValue('id') as number
+            const isAdmin = session?.user?.rol === 'administrador'
 
             const handleView = () => {
                 router.push(`/dashboard/admin/activity/${id}/edit`)
@@ -83,9 +86,11 @@ export const activitiesColumns: ColumnDef<ActivityDTO>[] = [
 
             return (
                 <div className="flex gap-2">
-                    <Button size="sm" variant="ghost" onClick={handleView}>
-                        <Eye />
-                    </Button>
+                    {isAdmin && (
+                        <Button size="sm" variant="ghost" onClick={handleView}>
+                            <Eye />
+                        </Button>
+                    )}
                 </div>
             )
         }
