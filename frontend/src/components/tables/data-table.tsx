@@ -28,6 +28,13 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import {
   Table,
   TableBody,
   TableCell,
@@ -38,7 +45,7 @@ import {
 import Link from "next/link"
 
 
-export function DataTable<T>({ data, columns, toolbarOptions, searchKey = 'email' }: { data: T[], columns: ColumnDef<T>[], toolbarOptions?: { btnText: string, redirect: string }, searchKey?: string }) {
+export function DataTable<T>({ data, columns, toolbarOptions, searchKey = 'email', roleFilterKey }: { data: T[], columns: ColumnDef<T>[], toolbarOptions?: { btnText: string, redirect: string }, searchKey?: string, roleFilterKey?: string }) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -68,7 +75,7 @@ export function DataTable<T>({ data, columns, toolbarOptions, searchKey = 'email
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
+      <div className="flex items-center py-4 gap-4">
         <Input
           placeholder="Filtrar por Email..."
           value={(table?.getColumn(searchKey)?.getFilterValue() as string) ?? ""}
@@ -77,6 +84,23 @@ export function DataTable<T>({ data, columns, toolbarOptions, searchKey = 'email
           }
           className="max-w-sm"
         />
+        {roleFilterKey && (
+          <Select
+            value={(table?.getColumn(roleFilterKey)?.getFilterValue() as string) ?? ""}
+            onValueChange={(value) =>
+              table?.getColumn(roleFilterKey)?.setFilterValue(value === "all" ? "" : value)
+            }
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Filtrar por rol" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos</SelectItem>
+              <SelectItem value="becario">Becarios</SelectItem>
+              <SelectItem value="administrador">Administradores</SelectItem>
+            </SelectContent>
+          </Select>
+        )}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">

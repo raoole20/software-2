@@ -19,9 +19,43 @@ export const createInternSchema = z.object({
       const cutOff = new Date(today.getFullYear() - 15, today.getMonth(), today.getDate())
       return d <= cutOff
     }, { message: 'El usuario debe tener al menos 15 años' }),
-  carrera: z.string().min(2, "Ingresa el nombre de la carrera"),
-  universidad: z.string().min(2, "Ingresa el nombre de la universidad"),
-  semestre: z.string().min(1, "Ingresa el semestre actual"),
+  carrera: z.string().optional(),
+  universidad: z.string().optional(),
+  semestre: z.string().optional(),
+  meta_horas_voluntariado_interno: z.string().optional(),
+  meta_horas_voluntariado_externo: z.string().optional(),
+  meta_horas_chat_ingles: z.string().optional(),
+  meta_horas_talleres: z.string().optional(),
+}).refine((data) => {
+  // If role is 'becario', require academic and hour goals fields
+  if (data.rol === Roles.USER) {
+    return data.carrera && data.carrera.length >= 2 &&
+           data.universidad && data.universidad.length >= 2 &&
+           data.semestre && data.semestre.length >= 1 &&
+           data.meta_horas_voluntariado_interno &&
+           data.meta_horas_voluntariado_externo &&
+           data.meta_horas_chat_ingles &&
+           data.meta_horas_talleres;
+  }
+  return true;
+}, {
+  message: "Los campos de formación académica y metas de horas son requeridos para becarios",
+  path: ["rol"]
+}).transform((data) => {
+  // For admins, set default values for optional fields
+  if (data.rol === Roles.ADMIN) {
+    return {
+      ...data,
+      carrera: data.carrera || '',
+      universidad: data.universidad || '',
+      semestre: data.semestre || '',
+      meta_horas_voluntariado_interno: data.meta_horas_voluntariado_interno || '0',
+      meta_horas_voluntariado_externo: data.meta_horas_voluntariado_externo || '0',
+      meta_horas_chat_ingles: data.meta_horas_chat_ingles || '0',
+      meta_horas_talleres: data.meta_horas_talleres || '0',
+    };
+  }
+  return data;
 });
 
 

@@ -1,6 +1,6 @@
 import React from 'react'
 
-import CreateInterForm from '@/components/form/users/create-inter-form'
+import CreateUserForm from '@/components/form/users/create-inter-form'
 import { Button } from '@/components/ui/button'
 import {
     Card,
@@ -51,19 +51,19 @@ export default function Page() {
             <section className="flex flex-wrap items-end justify-between gap-6 mb-5">
                 <div className="space-y-3">
                     <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                        Alta de becario
+                        Alta de usuario
                     </p>
-                    <h1 className="text-3xl font-semibold tracking-tight">Registrar nuevo becario</h1>
+                    <h1 className="text-3xl font-semibold tracking-tight">Registrar nuevo usuario</h1>
                     <p className="max-w-2xl text-sm text-muted-foreground">
-                        Completa la ficha del becario con los datos mas recientes. Esta informacion se comparte con talento humano y liderazgo para dar seguimiento al onboarding.
+                        Completa la ficha del usuario con los datos mas recientes. Esta informacion se comparte con talento humano y liderazgo para dar seguimiento al onboarding.
                     </p>
                 </div>
                 <div className="flex flex-col gap-2 sm:flex-row">
-                    <Button form="create-intern-form" type="reset" variant="outline">
+                    <Button form="create-user-form" type="reset" variant="outline">
                         Limpiar
                     </Button>
-                    <Button form="create-intern-form" type="submit">
-                        Guardar becario
+                    <Button form="create-user-form" type="submit">
+                        Guardar usuario
                     </Button>
                 </div>
             </section>
@@ -71,13 +71,13 @@ export default function Page() {
             <div className="grid gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
                 <Card className="h-fit">
                     <CardHeader>
-                        <CardTitle>Datos del becario</CardTitle>
+                        <CardTitle>Datos del usuario</CardTitle>
                         <CardDescription>
                                     Guarda la informacion clave para registrar y acompanar el proceso.
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <CreateInterForm showFooter={false} />
+                        <CreateUserForm showFooter={false} />
                     </CardContent>
                 </Card>
 

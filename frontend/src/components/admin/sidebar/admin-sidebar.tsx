@@ -128,6 +128,10 @@ const collaboratorNavigation: DashboardSection[] = [
         title: "Resumen",
         href: "/dashboard/interns/overview",
       },
+      {
+        title: "Mi perfil",
+        href: "/dashboard/interns/profile",
+      },
     ],
   },
   {

@@ -9,9 +9,13 @@ export interface CreateUserDTO {
     rol:              Roles;
     sexo:             'M' | 'F' | 'O';
     fecha_nacimiento: Date;
-    carrera:          string;
-    universidad:      string;
-    semestre:         string;
+    carrera?:         string;
+    universidad?:     string;
+    semestre?:        string;
+    meta_horas_voluntariado_interno?: string;
+    meta_horas_voluntariado_externo?: string;
+    meta_horas_chat_ingles?:          string;
+    meta_horas_talleres?:             string;
 }
 
 export interface Users {
@@ -22,7 +26,7 @@ export interface Users {
     last_name:                       string;
     rol:                             string;
     sexo:                            string;
-    fecha_nacimiento:                null;
+    fecha_nacimiento:                string;
     carrera:                         string;
     universidad:                     string;
     semestre:                        string;
@@ -30,4 +34,5 @@ export interface Users {
     meta_horas_voluntariado_externo: string;
     meta_horas_chat_ingles:          string;
     meta_horas_talleres:             string;
+    actividades_asignadas?:          string;
 }

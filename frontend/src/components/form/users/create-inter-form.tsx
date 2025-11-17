@@ -36,23 +36,30 @@ const defaultValues: CreateInternFormValues = {
     carrera: '',
     universidad: '',
     semestre: '',
+    meta_horas_voluntariado_interno: '',
+    meta_horas_voluntariado_externo: '',
+    meta_horas_chat_ingles: '',
+    meta_horas_talleres: '',
 }
 
-type CreateInterFormProps = {
+type CreateUserFormProps = {
     formId?: string
     showFooter?: boolean
 }
 
-export default function CreateInterForm({
-    formId = 'create-intern-form',
+export default function CreateUserForm({
+    formId = 'create-user-form',
     showFooter = true,
-}: CreateInterFormProps) {
+}: CreateUserFormProps) {
     const router = useRouter()
     const form = useForm<CreateInternFormValues>({
         resolver: zodResolver(createInternSchema),
         defaultValues,
         mode: 'onTouched',
     })
+
+    const selectedRole = form.watch('rol')
+    const isIntern = selectedRole === 'becario'
 
     const handleSubmit = React.useCallback(
         async (values: CreateInternFormValues) => {
@@ -262,59 +269,130 @@ export default function CreateInterForm({
                     </div>
                 </section>
 
-                <Separator />
+                {isIntern && (
+                    <>
+                        <Separator />
 
-                <section className="space-y-4">
-                    <div className="space-y-1">
-                        <h3 className="text-sm font-semibold tracking-wide uppercase text-muted-foreground">
-                            Formacion academica
-                        </h3>
-                        <p className="text-sm text-muted-foreground">
-                            Estos campos ayudan a organizar cohortes y asignar acompanamiento.
-                        </p>
-                    </div>
-                    <div className="grid gap-6 md:grid-cols-2">
-                        <FormField
-                            control={form.control}
-                            name="universidad"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Universidad</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="Nombre de la universidad" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="carrera"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Carrera</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="Programa academico" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="semestre"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Semestre</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="Ej. 5" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                    </div>
-                </section>
+                        <section className="space-y-4">
+                            <div className="space-y-1">
+                                <h3 className="text-sm font-semibold tracking-wide uppercase text-muted-foreground">
+                                    Formacion academica
+                                </h3>
+                                <p className="text-sm text-muted-foreground">
+                                    Estos campos ayudan a organizar cohortes y asignar acompanamiento.
+                                </p>
+                            </div>
+                            <div className="grid gap-6 md:grid-cols-2">
+                                <FormField
+                                    control={form.control}
+                                    name="universidad"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Universidad</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="Nombre de la universidad" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="carrera"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Carrera</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="Programa academico" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="semestre"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Semestre</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="Ej. 5" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+                        </section>
+
+                        <Separator />
+
+                        <section className="space-y-4">
+                            <div className="space-y-1">
+                                <h3 className="text-sm font-semibold tracking-wide uppercase text-muted-foreground">
+                                    Metas de horas
+                                </h3>
+                                <p className="text-sm text-muted-foreground">
+                                    Define las metas de horas para las diferentes actividades del becario.
+                                </p>
+                            </div>
+                            <div className="grid gap-6 md:grid-cols-2">
+                                <FormField
+                                    control={form.control}
+                                    name="meta_horas_voluntariado_interno"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Voluntariado Interno</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="Horas" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="meta_horas_voluntariado_externo"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Voluntariado Externo</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="Horas" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="meta_horas_chat_ingles"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Chat Inglés</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="Horas" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="meta_horas_talleres"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Talleres</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="Horas" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+                        </section>
+                    </>
+                )}
 
                 <Button type='submit'>Guardar</Button>
                 {showFooter ? (

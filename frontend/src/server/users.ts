@@ -130,6 +130,72 @@ export async function getAllUsers() {
   };
 }
 
+export async function getMyProfile() {
+  const session = await getSession();
+  try {
+    const response = await request.get<Users>("/api/users/usuarios/mi_perfil/", {
+      headers: {
+        Authorization: `Token ${session?.accessToken}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching my profile:", error);
+    if (error instanceof AxiosError) {
+      throw {
+        data: error.response?.data,
+        status: error.response?.status,
+        code: error.response?.status,
+        internalCode: error.code,
+        message:
+          error.response?.data?.message ||
+          "An error occurred while fetching profile",
+      };
+    }
+  }
+
+  throw {
+    data: null,
+    status: 500,
+    internalCode: "U_#501",
+    code: "internal_server_error",
+    message: "An unexpected error occurred while fetching profile",
+  };
+}
+
+export async function getUserById(id: number) {
+  const session = await getSession();
+  try {
+    const response = await request.get<Users>(`/api/users/usuarios/${id}/`, {
+      headers: {
+        Authorization: `Token ${session?.accessToken}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    if (error instanceof AxiosError) {
+      throw {
+        data: error.response?.data,
+        status: error.response?.status,
+        code: error.response?.status,
+        internalCode: error.code,
+        message:
+          error.response?.data?.message ||
+          "An error occurred while fetching user",
+      };
+    }
+  }
+
+  throw {
+    data: null,
+    status: 500,
+    internalCode: "U_#501",
+    code: "internal_server_error",
+    message: "An unexpected error occurred while fetching user",
+  };
+}
+
 export async function deleteUser(id: number) {
   const session = await getSession();
   try {
@@ -167,8 +233,8 @@ export async function deleteUser(id: number) {
 
 export async function editUser(data: Partial<Users> & { id: number }) {
   const session = await getSession();
-  try { 
-    const response = await request.put<Users>(`/api/users/usuarios/${data.id}/`, data, {
+  try {
+    const response = await request.patch<Users>(`/api/users/usuarios/${data.id}/`, data, {
       headers: {
         Authorization: `Token ${session?.accessToken}`,
       },

@@ -49,8 +49,20 @@ class UsuarioCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usuario
         fields = ['username', 'email', 'password', 'first_name', 'last_name', 'rol',
-                 'sexo', 'fecha_nacimiento', 'carrera', 'universidad', 'semestre']
-    
+                 'sexo', 'fecha_nacimiento', 'carrera', 'universidad', 'semestre',
+                 'meta_horas_voluntariado_interno', 'meta_horas_voluntariado_externo',
+                 'meta_horas_chat_ingles', 'meta_horas_talleres']
+
+    def validate_username(self, value):
+        if Usuario.objects.filter(username=value).exists():
+            raise serializers.ValidationError("Ya existe un usuario con este nombre de usuario.")
+        return value
+
+    def validate_email(self, value):
+        if Usuario.objects.filter(email=value).exists():
+            raise serializers.ValidationError("Ya existe un usuario con este correo electrónico.")
+        return value
+
     def create(self, validated_data):
         password = validated_data.pop('password')
         user = Usuario(**validated_data)

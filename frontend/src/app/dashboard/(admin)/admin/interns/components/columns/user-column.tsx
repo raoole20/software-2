@@ -5,7 +5,7 @@ import { ColumnDef } from "@tanstack/react-table"
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
 import { deleteUser } from '@/server/users'
-import { Loader2, Trash2 } from 'lucide-react'
+import { Loader2, Trash2, Eye } from 'lucide-react'
 import { getSession, useSession } from 'next-auth/react'
 
 export const usersColumns: ColumnDef<Users>[] = [
@@ -32,6 +32,16 @@ export const usersColumns: ColumnDef<Users>[] = [
     accessorKey: 'username',
     header: 'Usuario',
     cell: ({ row }) => <div className="font-medium">{row.getValue('username')}</div>,
+  },
+  {
+    accessorKey: 'first_name',
+    header: 'Nombre',
+    cell: ({ row }) => <div>{row.getValue('first_name')}</div>,
+  },
+  {
+    accessorKey: 'last_name',
+    header: 'Apellido',
+    cell: ({ row }) => <div>{row.getValue('last_name')}</div>,
   },
   {
     accessorKey: 'email',
@@ -76,8 +86,15 @@ export const usersColumns: ColumnDef<Users>[] = [
         }
       }
 
+      const handleView = () => {
+        router.push(`/dashboard/admin/interns/${user.id}/profile`)
+      }
+
       return (
         <div className="flex gap-2">
+          <Button size="sm" variant="ghost" onClick={handleView}>
+            <Eye />
+          </Button>
           <Button  size="sm" variant="ghost" onClick={handleDelete} disabled={loading || data?.user?.id === user.id}>
             {loading ? <Loader2 className='animate-spin' /> :
               <Trash2 />}

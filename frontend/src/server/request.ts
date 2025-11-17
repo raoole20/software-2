@@ -6,7 +6,7 @@ export const request = axios.create({
   baseURL: process.env.API_URL
 })
 
-type Method = 'get' | 'post' | 'put' | 'delete'
+type Method = 'get' | 'post' | 'put' | 'patch' | 'delete'
 
 async function authRequest<T = any>({ method, url, data, params }: { method: Method; url: string; data?: any; params?: any; }): Promise<T> {
   const session = await getSession()
@@ -40,6 +40,7 @@ async function authRequest<T = any>({ method, url, data, params }: { method: Met
 export const apiGet = <T = any>(url: string, params?: any) => authRequest<T>({ method: 'get', url, params })
 export const apiPost = <T = any>(url: string, data?: any) => authRequest<T>({ method: 'post', url, data })
 export const apiPut = <T = any>(url: string, data?: any) => authRequest<T>({ method: 'put', url, data })
+export const apiPatch = <T = any>(url: string, data?: any) => authRequest<T>({ method: 'patch', url, data })
 export const apiDelete = <T = any>(url: string) => authRequest<T>({ method: 'delete', url })
 
 // Uniform service-level response to avoid repeating shapes in each server function
@@ -79,6 +80,15 @@ export async function servicePostResult<T>(url: string, body?: any, successMessa
 export async function servicePutResult<T>(url: string, body?: any, successMessage = 'OK'): Promise<ServiceResponse<T>> {
   try {
     const data = await apiPut<T>(url, body)
+    return buildSuccess<T>(data, successMessage, 200)
+  } catch (error: any) {
+    return buildError(error, `Error updating resource`)
+  }
+}
+
+export async function servicePatchResult<T>(url: string, body?: any, successMessage = 'OK'): Promise<ServiceResponse<T>> {
+  try {
+    const data = await apiPatch<T>(url, body)
     return buildSuccess<T>(data, successMessage, 200)
   } catch (error: any) {
     return buildError(error, `Error updating resource`)
