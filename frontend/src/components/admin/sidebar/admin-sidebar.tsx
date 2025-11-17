@@ -104,12 +104,12 @@ const adminNavigation: DashboardSection[] = [
     icon: CalendarClock,
     items: [
       {
-        title: "Desarrollado Por",
-        href: "/dashboard/admin/infor-developers",
+        title: "Nosotros",
+        href: "/dashboard/admin/nosotros",
       },
       {
-        title: "Contacto",
-        href: "/dashboard/admin/contact",
+        title: "Contactos",
+        href: "/dashboard/admin/contactos",
       }
     ],
   },
