@@ -23,5 +23,11 @@ class Usuario(AbstractUser):
     meta_horas_chat_ingles = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     meta_horas_talleres = models.DecimalField(max_digits=5, decimal_places=2, default=0)
 
+    is_active = models.BooleanField(default=True, help_text="Desactivar en lugar de eliminar")
+
+
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.rol})"
+    
+    objects = models.Manager()  # Manager por defecto
+    active_objects = models.Manager()  # Manager para solo activos

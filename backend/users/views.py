@@ -67,12 +67,78 @@ class UsuarioViewSet(viewsets.ModelViewSet):
     
     def get_queryset(self):
         user = self.request.user
-        queryset = Usuario.objects.all().prefetch_related('actividades_asignadas')
+        queryset = Usuario.objects.filter(is_active=True).prefetch_related('actividades_asignadas')
         if user.rol == 'administrador':
             return queryset
         elif user.rol == 'becario':
             return queryset.filter(id=user.id)
         return Usuario.objects.none()
+    
+    @extend_schema(
+        description="""**👑 SOLO ADMINISTRADORES** - Desactivar usuario
+        
+        Desactiva un usuario (soft delete) en lugar de eliminarlo permanentemente.
+        El usuario ya no podrá acceder al sistema pero sus datos se mantienen.
+        
+        **Permisos:**
+        - **Administradores:** Pueden desactivar cualquier usuario
+        - **Becarios:** No tienen acceso a esta funcionalidad
+        """
+    )
+    @action(detail=True, methods=['post'], permission_classes=[IsAdministrador])
+    def desactivar(self, request, pk=None):
+        usuario = self.get_object()
+        usuario.is_active = False
+        usuario.save()
+        
+        return Response({
+            'message': f'Usuario {usuario.get_full_name()} desactivado correctamente',
+            'usuario_id': usuario.id,
+            'estado': 'desactivado'
+        })
+    
+    # NUEVO: Endpoint para reactivar usuario
+    @extend_schema(
+        description="""**👑 SOLO ADMINISTRADORES** - Reactivar usuario
+        
+        Reactiva un usuario que había sido desactivado previamente.
+        
+        **Permisos:**
+        - **Administradores:** Pueden reactivar cualquier usuario
+        - **Becarios:** No tienen acceso a esta funcionalidad
+        """
+    )
+    @action(detail=True, methods=['post'], permission_classes=[IsAdministrador])
+    def reactivar(self, request, pk=None):
+        try:
+            usuario = Usuario.objects.get(id=pk, is_active=False)
+            usuario.is_active = True
+            usuario.save()
+            
+            return Response({
+                'message': f'Usuario {usuario.get_full_name()} reactivado correctamente',
+                'usuario_id': usuario.id,
+                'estado': 'activado'
+            })
+        except Usuario.DoesNotExist:
+            return Response(
+                {'error': 'Usuario no encontrado o ya está activo'}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+    
+    @extend_schema(
+        description="""**👑 SOLO ADMINISTRADORES** - Eliminar usuario permanentemente
+        
+        Elimina permanentemente un usuario del sistema.
+        Esta acción no se puede deshacer.
+        
+        **Permisos:**
+        - **Administradores:** Pueden eliminar permanentemente cualquier usuario
+        - **Becarios:** No tienen acceso a esta funcionalidad
+        """
+    )
+    def destroy(self, request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)
     
     def get_permissions(self):
         if self.action in ['create', 'update', 'destroy']:
